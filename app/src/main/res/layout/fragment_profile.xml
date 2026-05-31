@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="#7C4DFF"
+            android:gravity="center"
+            android:text="F"
+            android:textColor="#FFFFFF"
+            android:textSize="52sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/txtProfileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trần An"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginTop="18dp"/>
+
+        <TextView
+            android:id="@+id/txtProfileRole"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FitBody Member"
+            android:textColor="#AAAAAA"
+            android:textSize="16sp"
+            android:layout_marginTop="6dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#1E1E1E"
+            android:padding="20dp"
+            android:layout_marginTop="30dp">
+
+            <TextView
+                android:id="@+id/txtProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📈 Tiến độ tập luyện"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtDarkMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🌙 Chế độ tối"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtPremium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔥 Premium Plan"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtEditProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="👤 Đổi thông tin cá nhân"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtChangePassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔐 Đổi mật khẩu"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚙️ Cài đặt"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:text="Đăng xuất"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#FF5252"
+                android:layout_marginTop="18dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
