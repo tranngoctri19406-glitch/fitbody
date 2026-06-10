@@ -1,5 +1,6 @@
 package com.example.fitbody.ui.auth
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -11,6 +12,7 @@ import com.example.fitbody.PtMainActivity
 import com.example.fitbody.R
 import com.example.fitbody.api.RetrofitClient
 import com.example.fitbody.model.LoginResponse
+import com.example.fitbody.ui.OnboardingActivity
 import com.example.fitbody.utils.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
         val session = SessionManager(this)
 
         if (session.isLoggedIn()) {
-            openMain()
+            openMainOrOnboarding()
             return
         }
 
@@ -44,7 +46,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun login() {
-
         val username = edtUsername.text.toString().trim()
         val password = edtPassword.text.toString().trim()
 
@@ -81,7 +82,6 @@ class LoginActivity : AppCompatActivity() {
                     val result = response.body()!!
 
                     if (result.success) {
-
                         val role = (result.role ?: "user").lowercase()
                         val userId = result.user_id ?: 0
                         val accountName = result.username ?: username
@@ -103,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
                         if (role == "pt") {
                             openPt(userId, accountName)
                         } else {
-                            openMain(userId, accountName)
+                            openMainOrOnboarding(userId, accountName)
                         }
 
                     } else {
@@ -130,11 +130,37 @@ class LoginActivity : AppCompatActivity() {
             })
     }
 
-    private fun openMain(userId: Int = 0, username: String = "") {
-        val intent = Intent(
-            this,
-            MainActivity::class.java
-        )
+    private fun openMainOrOnboarding(
+        userId: Int = 0,
+        username: String = ""
+    ) {
+        val sharedPreferences =
+            getSharedPreferences(
+                "onboarding_data",
+                Context.MODE_PRIVATE
+            )
+
+        val key =
+            "is_onboarding_completed_$userId"
+
+        val isCompleted =
+            sharedPreferences.getBoolean(
+                key,
+                false
+            )
+
+        val intent =
+            if (isCompleted) {
+                Intent(
+                    this,
+                    MainActivity::class.java
+                )
+            } else {
+                Intent(
+                    this,
+                    OnboardingActivity::class.java
+                )
+            }
 
         intent.putExtra("user_id", userId)
         intent.putExtra("username", username)
@@ -147,10 +173,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun openPt(userId: Int, username: String) {
-        val intent = Intent(
-            this,
-            PtMainActivity::class.java
-        )
+        val intent =
+            Intent(
+                this,
+                PtMainActivity::class.java
+            )
 
         intent.putExtra("user_id", userId)
         intent.putExtra("username", username)

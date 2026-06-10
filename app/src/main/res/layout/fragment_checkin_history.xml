@@ -2,7 +2,6 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -15,38 +14,22 @@
         android:layout_height="wrap_content"
         android:text="← Quay lại"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:background="#88000000"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
+        android:paddingBottom="18dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PT Dashboard"
+        android:text="📋 Lịch sử Check-in"
         android:textColor="#FFFFFF"
-        android:textSize="30sp"
+        android:textSize="28sp"
         android:textStyle="bold"/>
 
-    <Button
-        android:id="@+id/btnAddWorkout"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:text="➕ Thêm bài tập"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:backgroundTint="#7C4DFF"
-        android:layout_marginTop="20dp"/>
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerWorkout"
+        android:id="@+id/recyclerCheckIn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="24dp"/>
 
 </LinearLayout>

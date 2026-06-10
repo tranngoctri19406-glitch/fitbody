@@ -17,6 +17,7 @@ import retrofit2.Response
 
 class ProgressFragment : Fragment() {
 
+    private lateinit var btnBack: TextView
     private lateinit var txtWorkoutCount: TextView
     private lateinit var txtCalories: TextView
     private lateinit var txtStreak: TextView
@@ -35,6 +36,7 @@ class ProgressFragment : Fragment() {
                 false
             )
 
+        btnBack = view.findViewById(R.id.btnBack)
         txtWorkoutCount =
             view.findViewById(R.id.txtWorkoutCount)
 
@@ -46,6 +48,10 @@ class ProgressFragment : Fragment() {
 
         progressWorkout =
             view.findViewById(R.id.progressWorkout)
+
+        btnBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
         loadProgress()
 

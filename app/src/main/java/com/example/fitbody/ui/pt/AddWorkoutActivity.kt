@@ -15,7 +15,7 @@ class AddWorkoutActivity : AppCompatActivity() {
     private lateinit var editReps: EditText
     private lateinit var editMuscleGroup: EditText
     private lateinit var btnSaveWorkout: Button
-    private lateinit var btnBack: TextView
+    private lateinit var btnBack: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

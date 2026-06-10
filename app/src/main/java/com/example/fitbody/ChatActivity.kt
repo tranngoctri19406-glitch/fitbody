@@ -6,14 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 
 class ChatActivity : AppCompatActivity() {
 
+    private lateinit var btnBack: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_chat)
 
-        val textView = TextView(this)
-        textView.text = "Màn hình chat sẽ làm sau"
-        textView.textSize = 22f
-        textView.setPadding(40, 80, 40, 40)
+        btnBack = findViewById(R.id.btnBack)
 
-        setContentView(textView)
+        btnBack.setOnClickListener {
+            finish()
+        }
     }
 }

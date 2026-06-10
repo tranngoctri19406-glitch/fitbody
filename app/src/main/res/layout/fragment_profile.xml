@@ -2,7 +2,6 @@
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#121212">
@@ -61,10 +60,46 @@
                 android:padding="14dp"/>
 
             <TextView
-                android:id="@+id/txtDarkMode"
+                android:id="@+id/txtWorkoutStats"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🌙 Chế độ tối"
+                android:text="📊 Thống kê tập luyện"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtSchedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📅 Lịch tập cá nhân"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtCheckIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📷 QR Check-in"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtCheckInHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📋 Lịch sử Check-in"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtBMI"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📏 BMI Calculator"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:padding="14dp"/>
@@ -74,6 +109,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="🔥 Premium Plan"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtShop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🛒 Shop FitBody"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:padding="14dp"/>
@@ -101,6 +145,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="⚙️ Cài đặt"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="14dp"/>
+
+            <TextView
+                android:id="@+id/txtDarkMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🌙 Chế độ tối"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:padding="14dp"/>

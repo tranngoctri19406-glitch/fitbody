@@ -1,6 +1,8 @@
 package com.example.fitbody.ui.detail
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +13,7 @@ import com.example.fitbody.R
 import com.example.fitbody.adapter.WorkoutAdapter
 import com.example.fitbody.api.RetrofitClient
 import com.example.fitbody.model.Workout
+import com.example.fitbody.ui.PTChatActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,6 +22,7 @@ class TrainerDetailActivity : AppCompatActivity() {
 
     private lateinit var recyclerWorkout: RecyclerView
     private lateinit var btnBack: TextView
+    private lateinit var btnChatPT: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +30,7 @@ class TrainerDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_trainer_detail)
 
         btnBack = findViewById(R.id.btnBack)
+        btnChatPT = findViewById(R.id.btnChatPT)
 
         val imgTrainer =
             findViewById<ImageView>(R.id.imgTrainer)
@@ -49,7 +54,7 @@ class TrainerDetailActivity : AppCompatActivity() {
             findViewById(R.id.recyclerWorkout)
 
         btnBack.setOnClickListener {
-            finish()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         recyclerWorkout.layoutManager =
@@ -85,6 +90,18 @@ class TrainerDetailActivity : AppCompatActivity() {
         Glide.with(this)
             .load(image)
             .into(imgTrainer)
+
+        btnChatPT.setOnClickListener {
+            val intent = Intent(
+                this,
+                PTChatActivity::class.java
+            )
+
+            intent.putExtra("pt_id", trainerId)
+            intent.putExtra("pt_name", name)
+
+            startActivity(intent)
+        }
 
         loadWorkouts(trainerId)
     }

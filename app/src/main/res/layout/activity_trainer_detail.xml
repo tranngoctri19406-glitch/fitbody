@@ -2,7 +2,6 @@
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#121212">
@@ -12,21 +11,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="← Quay lại"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="18dp"/>
-
-        <ImageView
-            android:id="@+id/imgTrainer"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="350dp"
-            android:scaleType="centerCrop"/>
+            android:layout_height="300dp">
+
+            <ImageView
+                android:id="@+id/imgTrainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+            <TextView
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="← Quay lại"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="#88000000"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="42dp"/>
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,6 +90,14 @@
                 android:textColor="#CCCCCC"
                 android:textSize="16sp"
                 android:layout_marginTop="12dp"/>
+
+            <Button
+                android:id="@+id/btnChatPT"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="💬 Chat với PT"
+                android:textStyle="bold"
+                android:layout_marginTop="18dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
