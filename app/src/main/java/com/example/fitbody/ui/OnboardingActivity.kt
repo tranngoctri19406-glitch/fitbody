@@ -13,6 +13,8 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import android.graphics.drawable.GradientDrawable
+import android.widget.NumberPicker
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.MainActivity
 import com.example.fitbody.R
@@ -204,117 +206,83 @@ class OnboardingActivity : AppCompatActivity() {
 
     private fun showBodyInfoStep() {
         txtQuestion.text = "Hãy cho chúng tôi biết thêm về bạn"
-        txtSubQuestion.text = "Chọn cân nặng và chiều cao để tạo kế hoạch"
+        txtSubQuestion.text = "Vuốt để chọn chỉ số cơ thể của bạn"
 
+        layoutOptions.removeAllViews()
+        layoutOptions.orientation = LinearLayout.VERTICAL
         layoutOptions.gravity = Gravity.CENTER
 
-        val weightTitle = TextView(this)
-        weightTitle.text = "Cân nặng"
-        weightTitle.textSize = 28f
-        weightTitle.setTextColor(Color.BLACK)
-        weightTitle.setTypeface(null, Typeface.BOLD)
+        val weightTitle = createTitle("Cân nặng")
 
-        val txtWeightValue = TextView(this)
-        txtWeightValue.text = "$weightValue kg"
-        txtWeightValue.textSize = 44f
-        txtWeightValue.setTextColor(Color.rgb(0, 102, 255))
-        txtWeightValue.setTypeface(null, Typeface.BOLD)
-        txtWeightValue.gravity = Gravity.CENTER
+        val pickerWeight = NumberPicker(this)
+        pickerWeight.minValue = 30
+        pickerWeight.maxValue = 200
+        pickerWeight.value = weightValue
+        pickerWeight.wrapSelectorWheel = true
 
-        val weightControl = createNumberControl(
-            onMinus = {
-                if (weightValue > 30) {
-                    weightValue--
-                    txtWeightValue.text = "$weightValue kg"
-                }
-            },
-            onPlus = {
-                if (weightValue < 200) {
-                    weightValue++
-                    txtWeightValue.text = "$weightValue kg"
-                }
-            }
-        )
+        val heightTitle = createTitle("Chiều cao")
 
-        val heightTitle = TextView(this)
-        heightTitle.text = "Chiều cao"
-        heightTitle.textSize = 28f
-        heightTitle.setTextColor(Color.BLACK)
-        heightTitle.setTypeface(null, Typeface.BOLD)
+        val pickerHeight = NumberPicker(this)
+        pickerHeight.minValue = 120
+        pickerHeight.maxValue = 220
+        pickerHeight.value = heightValue
+        pickerHeight.wrapSelectorWheel = true
 
-        val txtHeightValue = TextView(this)
-        txtHeightValue.text = "$heightValue cm"
-        txtHeightValue.textSize = 44f
-        txtHeightValue.setTextColor(Color.rgb(0, 102, 255))
-        txtHeightValue.setTypeface(null, Typeface.BOLD)
-        txtHeightValue.gravity = Gravity.CENTER
+        // Thiết lập màu chữ đậm hơn và kích thước to hơn (dành cho Android 10 trở lên)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            pickerWeight.textColor = Color.BLACK
+            pickerWeight.textSize = 80f // Làm số to lên
 
-        val heightControl = createNumberControl(
-            onMinus = {
-                if (heightValue > 120) {
-                    heightValue--
-                    txtHeightValue.text = "$heightValue cm"
-                }
-            },
-            onPlus = {
-                if (heightValue < 220) {
-                    heightValue++
-                    txtHeightValue.text = "$heightValue cm"
-                }
-            }
-        )
-
-        layoutOptions.addView(weightTitle, createLabelParams())
-        layoutOptions.addView(txtWeightValue)
-        layoutOptions.addView(weightControl)
-
-        layoutOptions.addView(heightTitle, createLabelParams())
-        layoutOptions.addView(txtHeightValue)
-        layoutOptions.addView(heightControl)
-
-        btnNext.text = "BẮT ĐẦU KẾ HOẠCH CỦA TÔI"
-    }
-
-    private fun createNumberControl(
-        onMinus: () -> Unit,
-        onPlus: () -> Unit
-    ): LinearLayout {
-        val layout = LinearLayout(this)
-        layout.orientation = LinearLayout.HORIZONTAL
-        layout.gravity = Gravity.CENTER
-        layout.setPadding(0, 8, 0, 18)
-
-        val btnMinus = Button(this)
-        btnMinus.text = "-"
-        btnMinus.textSize = 24f
-
-        val btnPlus = Button(this)
-        btnPlus.text = "+"
-        btnPlus.textSize = 24f
-
-        btnMinus.setOnClickListener {
-            onMinus()
+            pickerHeight.textColor = Color.BLACK
+            pickerHeight.textSize = 80f // Làm số to lên
         }
 
-        btnPlus.setOnClickListener {
-            onPlus()
+        pickerWeight.setOnValueChangedListener { _, _, newVal ->
+            weightValue = newVal
         }
 
-        val params = LinearLayout.LayoutParams(
-            90,
-            60
+        pickerHeight.setOnValueChangedListener { _, _, newVal ->
+            heightValue = newVal
+        }
+
+        layoutOptions.addView(weightTitle)
+        layoutOptions.addView(
+            pickerWeight,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                500 // Tăng chiều cao lên một chút để chứa số to
+            )
         )
-        params.setMargins(16, 0, 16, 0)
 
-        layout.addView(btnMinus, params)
-        layout.addView(btnPlus, params)
-
-        return layout
+        layoutOptions.addView(heightTitle)
+        layoutOptions.addView(
+            pickerHeight,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                500 // Tăng chiều cao lên một chút để chứa số to
+            )
+        )
     }
+
+    private fun createTitle(text: String): TextView {
+        val title = TextView(this)
+        title.text = text
+        title.textSize = 28f
+        title.setTypeface(null, Typeface.BOLD)
+        title.setTextColor(Color.BLACK)
+        title.gravity = Gravity.CENTER
+        title.setPadding(0, 30, 0, 16)
+        return title
+    }
+
 
     private fun showPlanReadyStep() {
         txtQuestion.text = "Kế hoạch của bạn đã sẵn sàng!"
         txtSubQuestion.text = "Chúng tôi đã chọn kế hoạch phù hợp với bạn nhất"
+
+        layoutOptions.removeAllViews()
+        layoutOptions.orientation = LinearLayout.VERTICAL
+        layoutOptions.gravity = Gravity.CENTER
 
         val plan = TextView(this)
 
@@ -330,8 +298,12 @@ class OnboardingActivity : AppCompatActivity() {
         plan.textSize = 20f
         plan.setTextColor(Color.WHITE)
         plan.setTypeface(null, Typeface.BOLD)
-        plan.setBackgroundColor(Color.rgb(0, 102, 255))
         plan.setPadding(36, 36, 36, 36)
+        plan.background = createRoundedBackground(
+            Color.rgb(0, 102, 255),
+            34f
+        )
+        plan.elevation = 12f
 
         layoutOptions.addView(
             plan,
@@ -352,36 +324,49 @@ class OnboardingActivity : AppCompatActivity() {
         val itemLayout = LinearLayout(this)
         itemLayout.orientation = LinearLayout.VERTICAL
         itemLayout.gravity = Gravity.CENTER
-        itemLayout.setPadding(6, 6, 6, 8)
-        itemLayout.setBackgroundColor(Color.TRANSPARENT)
+        itemLayout.setPadding(14, 14, 14, 18)
+        itemLayout.background = createRoundedBackground(
+            Color.WHITE,
+            34f
+        )
+        itemLayout.elevation = 12f
         itemLayout.isClickable = true
         itemLayout.isFocusable = true
 
         val imageView = ImageView(this)
         imageView.setImageResource(imageRes)
-        imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
         imageView.adjustViewBounds = true
 
         val imageParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             1200
         )
-        val textView = TextView(this)
 
+        val textView = TextView(this)
         textView.text = text
-        textView.textSize = 32f
+        textView.textSize = 28f
         textView.setTextColor(Color.BLACK)
         textView.setTypeface(null, Typeface.BOLD)
         textView.gravity = Gravity.CENTER
-        textView.setPadding(0, 10, 0, 0)
+        textView.setPadding(0, 14, 0, 0)
 
         itemLayout.addView(imageView, imageParams)
         itemLayout.addView(textView)
 
         itemLayout.setOnClickListener {
-            selectedLayout?.setBackgroundColor(Color.TRANSPARENT)
+            selectedLayout?.background = createRoundedBackground(
+                Color.WHITE,
+                34f
+            )
 
-            itemLayout.setBackgroundColor(Color.rgb(230, 240, 255))
+            itemLayout.background = createRoundedBackground(
+                Color.rgb(230, 240, 255),
+                34f,
+                Color.rgb(0, 102, 255),
+                4
+            )
+
             textView.setTextColor(Color.rgb(0, 102, 255))
 
             selectedLayout = itemLayout
@@ -394,7 +379,7 @@ class OnboardingActivity : AppCompatActivity() {
         )
 
         params.weight = 1f
-        params.setMargins(4, 0, 4, 0)
+        params.setMargins(8, 0, 8, 0)
 
         layoutOptions.addView(itemLayout, params)
     }
@@ -410,13 +395,23 @@ class OnboardingActivity : AppCompatActivity() {
         option.setTypeface(null, Typeface.BOLD)
         option.gravity = Gravity.CENTER_VERTICAL
         option.setPadding(34, 0, 34, 0)
-        option.setBackgroundColor(Color.rgb(248, 248, 248))
+        option.background = createRoundedBackground(
+            Color.WHITE,
+            34f
+        )
+        option.elevation = 10f
 
         option.setOnClickListener {
-            selectedView?.setBackgroundColor(Color.rgb(248, 248, 248))
+            selectedView?.background = createRoundedBackground(
+                Color.WHITE,
+                34f
+            )
             selectedView?.setTextColor(Color.BLACK)
 
-            option.setBackgroundColor(Color.rgb(0, 102, 255))
+            option.background = createRoundedBackground(
+                Color.rgb(0, 102, 255),
+                34f
+            )
             option.setTextColor(Color.WHITE)
 
             selectedView = option
@@ -433,8 +428,12 @@ class OnboardingActivity : AppCompatActivity() {
     ) {
         val layout = LinearLayout(this)
         layout.orientation = LinearLayout.VERTICAL
-        layout.setPadding(30, 16, 30, 16)
-        layout.setBackgroundColor(Color.rgb(248, 248, 248))
+        layout.setPadding(30, 18, 30, 18)
+        layout.background = createRoundedBackground(
+            Color.WHITE,
+            34f
+        )
+        layout.elevation = 10f
 
         val titleView = TextView(this)
         titleView.text = title
@@ -455,13 +454,19 @@ class OnboardingActivity : AppCompatActivity() {
             if (goals.contains(value)) {
                 goals.remove(value)
 
-                layout.setBackgroundColor(Color.rgb(248, 248, 248))
+                layout.background = createRoundedBackground(
+                    Color.WHITE,
+                    34f
+                )
                 titleView.setTextColor(Color.BLACK)
                 descView.setTextColor(Color.GRAY)
             } else {
                 goals.add(value)
 
-                layout.setBackgroundColor(Color.rgb(0, 102, 255))
+                layout.background = createRoundedBackground(
+                    Color.rgb(0, 102, 255),
+                    34f
+                )
                 titleView.setTextColor(Color.WHITE)
                 descView.setTextColor(Color.WHITE)
             }
@@ -470,10 +475,27 @@ class OnboardingActivity : AppCompatActivity() {
         layoutOptions.addView(layout, createGoalOptionParams())
     }
 
+    private fun createRoundedBackground(
+        color: Int,
+        radius: Float,
+        strokeColor: Int? = null,
+        strokeWidth: Int = 0
+    ): GradientDrawable {
+        val drawable = GradientDrawable()
+        drawable.cornerRadius = radius
+        drawable.setColor(color)
+
+        if (strokeColor != null) {
+            drawable.setStroke(strokeWidth, strokeColor)
+        }
+
+        return drawable
+    }
+
     private fun createOptionParams(): LinearLayout.LayoutParams {
         val params = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            86
+            92
         )
         params.setMargins(0, 12, 0, 12)
         return params
@@ -482,18 +504,9 @@ class OnboardingActivity : AppCompatActivity() {
     private fun createGoalOptionParams(): LinearLayout.LayoutParams {
         val params = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            105
+            112
         )
         params.setMargins(0, 10, 0, 10)
-        return params
-    }
-
-    private fun createLabelParams(): LinearLayout.LayoutParams {
-        val params = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.setMargins(0, 18, 0, 8)
         return params
     }
 

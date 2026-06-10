@@ -93,37 +93,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Cân nặng"
-                android:textColor="#AAAAAA"
-                android:textSize="16sp"
-                android:layout_marginTop="24dp"/>
-
-            <EditText
-                android:id="@+id/edtWeight"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:hint="kg"
-                android:inputType="numberDecimal"
                 android:textColor="#FFFFFF"
-                android:textColorHint="#888888"
-                android:backgroundTint="#FFFFFF"/>
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="28dp"/>
+
+            <NumberPicker
+                android:id="@+id/pickerWeight"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_marginTop="8dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Chiều cao"
-                android:textColor="#AAAAAA"
-                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:layout_marginTop="24dp"/>
 
-            <EditText
-                android:id="@+id/edtHeight"
+            <NumberPicker
+                android:id="@+id/pickerHeight"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:hint="cm"
-                android:inputType="numberDecimal"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#888888"
-                android:backgroundTint="#FFFFFF"/>
+                android:layout_height="160dp"
+                android:layout_marginTop="8dp"/>
 
             <Button
                 android:id="@+id/btnSaveSetting"
