@@ -78,10 +78,18 @@ class PtMainActivity : AppCompatActivity() {
         val currentPt = trainers.find { it.id == ptId }
         
         if (currentPt != null && currentPt.image.isNotEmpty()) {
-            Glide.with(this)
-                .load(currentPt.image)
-                .placeholder(R.drawable.ic_launcher_background)
-                .into(imgProfilePt)
+            val imageResId = resources.getIdentifier(currentPt.image, "drawable", packageName)
+            if (imageResId != 0) {
+                Glide.with(this)
+                    .load(imageResId)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .into(imgProfilePt)
+            } else {
+                Glide.with(this)
+                    .load(currentPt.image)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .into(imgProfilePt)
+            }
         }
     }
 

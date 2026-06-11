@@ -84,9 +84,16 @@ class TrainerDetailActivity : AppCompatActivity() {
         txtMuscle.text = muscle
         txtSchedule.text = schedule
 
-        Glide.with(this)
-            .load(image)
-            .into(imgTrainer)
+        val imageResId = resources.getIdentifier(image, "drawable", packageName)
+        if (imageResId != 0) {
+            Glide.with(this)
+                .load(imageResId)
+                .into(imgTrainer)
+        } else {
+            Glide.with(this)
+                .load(R.drawable.male)
+                .into(imgTrainer)
+        }
 
         loadWorkouts(trainerId)
     }

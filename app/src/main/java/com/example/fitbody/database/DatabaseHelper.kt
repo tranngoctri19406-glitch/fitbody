@@ -18,7 +18,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "fitbody.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         // Table names
         const val TABLE_USERS = "tbl_users"
@@ -158,20 +158,20 @@ class DatabaseHelper(context: Context) :
 
     private fun seedTrainers(db: SQLiteDatabase) {
         val trainers = arrayOf(
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (1, 'HLV AN', 'Tăng cơ toàn thân', 'Ngực - Tay sau', '850 kcal', 'Thứ 2 / 4 / 6', 'http://10.0.2.2/fitbody_api/uploads/1779709471_ChatGPT Image 18_44_04 25 thg 5, 2026.png', 'PT chuyên bodybuilding giúp tăng cơ nhanh và siết body.', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (2, 'HLV Quỳnh Anh', 'Fitness nữ', 'Mông - Đùi', '720 kcal', 'Thứ 3 / 5 / 7', 'http://10.0.2.2/fitbody_api/uploads/1779709347_1779708789438_7000948680681510670_7000948680681510670_87700e2435e58f3d91fe5d51910de496.jpg', 'PT nữ chuyên body fitness và tăng vòng 3.', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (16, 'HLV Tiến', 'gym', 'ngực, chân', '800 kcal', 'hằng ngày ', '../uploads/1781077446_HTB10.X2S6DpK1RjSZFrq6y78VXaV.webp', 'kinh nghiệm ', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (17, 'HLV Trí', 'gym', 'tay,vai', '850kcal', 'hằng ngày ', '../uploads/1781078168_7e351380453af12f45573248f4d41048.jpg', 'đào tạo lâu năm ', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (18, 'HLV Nhi', 'gym', 'mông,đùi', '550kcal', 'hằng ngày ', '../uploads/1781078260_bo-do-the-thao-tap-gym-nu2_6d575b51350441019e13ddbc2ae024b3_grande.jpg', 'dáng chuẩn', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (19, 'HLV tony', 'gym', 'full body', '800kcal', 'hằng ngày ', '../uploads/1781078348_006B6279-133D-4CAA-B60A-4E79389B1DC7.webp', 'kinh nghiệm lâu năm', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (21, 'HLV jenny', 'cardio', 'mông, đùi, eo', '700kcal', 'hằng ngày ', '../uploads/1781078516_0ec77b7f4851f0d4f15413af8294c6b9.jpg', 'kinh nghiệm', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (22, 'HLV Minh Anh', 'Fitness nữ', 'Mông - Đùi', '700 kcal', 'Thứ 2 / 4 / 6', 'http://10.0.2.2/fitbody_api/uploads/1781103718_Anh-Gymer-16-min-585x878.jpg', 'PT nữ chuyên tăng vòng 3 và giảm mỡ.', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (23, 'HLV Bảo Ngọc', 'Yoga', 'Toàn thân', '500 kcal', 'Thứ 3 / 5 / 7', 'http://10.0.2.2/fitbody_api/uploads/1781105730_Anh-Gymer-11-min.jpg', 'Huấn luyện Yoga và cải thiện vóc dáng.', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (24, 'HLV Hoàng Nam', 'Bodybuilding', 'Ngực - Vai', '900 kcal', 'Thứ 2 / 4 / 6', 'http://10.0.2.2/fitbody_api/uploads/1781105009_OIP.webp', 'PT chuyên tăng cơ và siết cơ thể.', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (25, 'HLV Quốc Huy', 'Gym', 'Full Body', '850 kcal', 'Thứ 3 / 5 / 7', 'http://10.0.2.2/fitbody_api/uploads/1781106059_OIP (1).webp', 'Chuyên giáo án cho người mới tập gym.', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (26, 'HLV Kim Chi', 'Fitness nữ', 'Bụng - Eo', '650 kcal', 'Thứ 2 / 5 / 7', 'http://10.0.2.2/fitbody_api/uploads/1781105823_kim-ye-eun-v0-5azjpayi96fa1.webp', 'PT nữ chuyên giảm mỡ bụng và giữ dáng.', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (27, 'HLV Tuấn Kiệt', 'Bodybuilding', 'Tay - Vai', '950 kcal', 'Hàng ngày', 'http://10.0.2.2/fitbody_api/uploads/1781106127_Anh-Gymer-9-min-585x390.jpg', 'Chuyên tăng cơ cho nam giới.', 'active')",
-            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (28, 'HLV Lan Hương', 'Cardio', 'Toàn thân', '600 kcal', 'Thứ 2 / 3 / 5', 'http://10.0.2.2/fitbody_api/uploads/1781105890_7763449db84b68e52a55a57fa7524ca4.jpg', 'PT nữ chuyên giảm cân và cardio.', 'active')"
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (1, 'HLV AN', 'Tăng cơ toàn thân', 'Ngực - Tay sau', '850 kcal', 'Thứ 2 / 4 / 6', 'male', 'PT chuyên bodybuilding giúp tăng cơ nhanh và siết body.', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (2, 'HLV Quỳnh Anh', 'Fitness nữ', 'Mông - Đùi', '720 kcal', 'Thứ 3 / 5 / 7', 'female', 'PT nữ chuyên body fitness và tăng vòng 3.', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (16, 'HLV Tiến', 'gym', 'ngực, chân', '800 kcal', 'hằng ngày ', 'male', 'kinh nghiệm ', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (17, 'HLV Trí', 'gym', 'tay,vai', '850kcal', 'hằng ngày ', 'male', 'đào tạo lâu năm ', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (18, 'HLV Nhi', 'gym', 'mông,đùi', '550kcal', 'hằng ngày ', 'female', 'dáng chuẩn', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (19, 'HLV tony', 'gym', 'full body', '800kcal', 'hằng ngày ', 'male', 'kinh nghiệm lâu năm', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (21, 'HLV jenny', 'cardio', 'mông, đùi, eo', '700kcal', 'hằng ngày ', 'female', 'kinh nghiệm', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (22, 'HLV Minh Anh', 'Fitness nữ', 'Mông - Đùi', '700 kcal', 'Thứ 2 / 4 / 6', 'female', 'PT nữ chuyên tăng vòng 3 và giảm mỡ.', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (23, 'HLV Bảo Ngọc', 'Yoga', 'Toàn thân', '500 kcal', 'Thứ 3 / 5 / 7', 'female', 'Huấn luyện Yoga và cải thiện vóc dáng.', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (24, 'HLV Hoàng Nam', 'Bodybuilding', 'Ngực - Vai', '900 kcal', 'Thứ 2 / 4 / 6', 'male', 'PT chuyên tăng cơ và siết cơ thể.', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (25, 'HLV Quốc Huy', 'Gym', 'Full Body', '850 kcal', 'Thứ 3 / 5 / 7', 'male', 'Chuyên giáo án cho người mới tập gym.', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (26, 'HLV Kim Chi', 'Fitness nữ', 'Bụng - Eo', '650 kcal', 'Thứ 2 / 5 / 7', 'female', 'PT nữ chuyên giảm mỡ bụng và giữ dáng.', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (27, 'HLV Tuấn Kiệt', 'Bodybuilding', 'Tay - Vai', '950 kcal', 'Hàng ngày', 'male', 'Chuyên tăng cơ cho nam giới.', 'active')",
+            "INSERT INTO $TABLE_TRAINERS (id, name, specialty, muscle, calories, schedule_text, image, description, status) VALUES (28, 'HLV Lan Hương', 'Cardio', 'Toàn thân', '600 kcal', 'Thứ 2 / 3 / 5', 'female', 'PT nữ chuyên giảm cân và cardio.', 'active')"
         )
         for (query in trainers) {
             db.execSQL(query)
