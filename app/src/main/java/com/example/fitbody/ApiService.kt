@@ -7,8 +7,6 @@ import com.example.fitbody.model.Schedule
 import com.example.fitbody.model.SimpleResponse
 import com.example.fitbody.model.Trainer
 import com.example.fitbody.model.Workout
-import com.example.fitbody.model.Message
-import com.example.fitbody.model.ChatUser
 import com.example.fitbody.model.Product
 import com.example.fitbody.model.CartItem
 import com.example.fitbody.model.WorkoutStatsResponse
@@ -132,25 +130,6 @@ interface ApiService {
     fun getCheckInHistory(
         @Query("user_id") userId: Int
     ): Call<List<CheckIn>>
-
-    @GET("get_messages.php")
-    fun getMessages(
-        @Query("user_id") userId: Int,
-        @Query("pt_id") ptId: Int
-    ): Call<List<Message>>
-
-    @FormUrlEncoded
-    @POST("send_message.php")
-    fun sendMessage(
-        @Field("sender_id") senderId: Int,
-        @Field("receiver_id") receiverId: Int,
-        @Field("message") message: String
-    ): Call<SimpleResponse>
-
-    @GET("get_chat_users.php")
-    fun getChatUsers(
-        @Query("pt_id") ptId: Int
-    ): Call<List<ChatUser>>
 
     @GET("get_products.php")
     fun getProducts(): Call<List<Product>>

@@ -12,8 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.MainActivity
 import com.example.fitbody.PtMainActivity
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.LoginResponse
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.ui.OnboardingActivity
 import com.example.fitbody.utils.SessionManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -120,24 +119,21 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleSocialLogin(socialId: String, provider: String, name: String, email: String) {
-        // Gửi thông tin social login về server của bạn
-        RetrofitClient.instance.socialLogin(email, name, socialId, provider)
-            .enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        val result = response.body()!!
-                        val session = SessionManager(this@LoginActivity)
-                        session.saveLogin(result.username ?: name, result.role ?: "user", result.user_id ?: 0)
-                        openMainOrOnboarding(result.user_id ?: 0, result.username ?: name)
-                    } else {
-                        Toast.makeText(this@LoginActivity, "Đăng nhập $provider thất bại", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        val dbHelper = DatabaseHelper(this)
+        var userId = dbHelper.getUserBySocialId(socialId, provider)
 
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Toast.makeText(this@LoginActivity, "Lỗi kết nối server", Toast.LENGTH_SHORT).show()
-                }
-            })
+        if (userId == -1) {
+            // Đăng ký mới nếu chưa có
+            userId = dbHelper.registerSocialUser(name, email, socialId, provider).toInt()
+        }
+
+        if (userId != -1) {
+            val session = SessionManager(this)
+            session.saveLogin(name, "user", userId)
+            openMainOrOnboarding(userId, name)
+        } else {
+            Toast.makeText(this, "Lỗi đăng nhập $provider", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun login() {
@@ -145,84 +141,22 @@ class LoginActivity : AppCompatActivity() {
         val password = edtPassword.text.toString().trim()
 
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(
-                this,
-                "Vui lòng nhập đầy đủ tài khoản và mật khẩu",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Vui lòng nhập đầy đủ tài khoản và mật khẩu", Toast.LENGTH_SHORT).show()
             return
         }
 
-        btnLogin.isEnabled = false
+        val dbHelper = DatabaseHelper(this)
+        val userId = dbHelper.checkUser(username, password)
 
-        RetrofitClient.instance
-            .login(username, password)
-            .enqueue(object : Callback<LoginResponse> {
-
-                override fun onResponse(
-                    call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
-                ) {
-                    btnLogin.isEnabled = true
-
-                    if (!response.isSuccessful || response.body() == null) {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Lỗi kết nối máy chủ",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return
-                    }
-
-                    val result = response.body()!!
-
-                    if (result.success) {
-                        val role = (result.role ?: "user").lowercase()
-                        val userId = result.user_id ?: 0
-                        val accountName = result.username ?: username
-
-                        val session = SessionManager(this@LoginActivity)
-
-                        session.saveLogin(
-                            accountName,
-                            role,
-                            userId
-                        )
-
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Đăng nhập thành công",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        if (role == "pt") {
-                            openPt(userId, accountName)
-                        } else {
-                            openMainOrOnboarding(userId, accountName)
-                        }
-
-                    } else {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Sai tài khoản hoặc mật khẩu",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<LoginResponse>,
-                    t: Throwable
-                ) {
-                    btnLogin.isEnabled = true
-
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Không kết nối được server",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        if (userId != -1) {
+            val session = SessionManager(this)
+            session.saveLogin(username, "user", userId)
+            
+            Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+            openMainOrOnboarding(userId, username)
+        } else {
+            Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun openMainOrOnboarding(

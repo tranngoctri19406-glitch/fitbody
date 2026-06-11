@@ -11,13 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.SimpleResponse
+import com.example.fitbody.database.DatabaseHelper
+import com.example.fitbody.utils.SessionManager
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class CheckInActivity : AppCompatActivity() {
 
@@ -93,52 +90,20 @@ class CheckInActivity : AppCompatActivity() {
     }
 
     private fun sendCheckInToServer(qrCode: String) {
-        txtLastCheckIn.text = "Đang gửi dữ liệu check-in..."
+        val session = SessionManager(this)
+        val currentUserId = session.getUserId()
+        
+        txtLastCheckIn.text = "Đang xử lý check-in..."
+        
+        val dbHelper = DatabaseHelper(this)
+        val resultId = dbHelper.addCheckIn(currentUserId, qrCode)
 
-        RetrofitClient.instance.checkIn(userId, qrCode)
-            .enqueue(object : Callback<SimpleResponse> {
-
-                override fun onResponse(
-                    call: Call<SimpleResponse>,
-                    response: Response<SimpleResponse>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        val result = response.body()!!
-
-                        Toast.makeText(
-                            this@CheckInActivity,
-                            result.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        if (result.success) {
-                            txtLastCheckIn.text = "Check-in thành công bằng QR:\n$qrCode"
-                        } else {
-                            txtLastCheckIn.text = "Check-in thất bại:\n${result.message}"
-                        }
-                    } else {
-                        Toast.makeText(
-                            this@CheckInActivity,
-                            "Lỗi phản hồi từ server",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        txtLastCheckIn.text = "Lỗi phản hồi từ server"
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<SimpleResponse>,
-                    t: Throwable
-                ) {
-                    Toast.makeText(
-                        this@CheckInActivity,
-                        "Lỗi kết nối: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    txtLastCheckIn.text = "Lỗi kết nối server:\n${t.message}"
-                }
-            })
+        if (resultId != -1L) {
+            Toast.makeText(this, "Check-in thành công!", Toast.LENGTH_SHORT).show()
+            txtLastCheckIn.text = "Check-in thành công bằng QR:\n$qrCode"
+        } else {
+            Toast.makeText(this, "Check-in thất bại", Toast.LENGTH_SHORT).show()
+            txtLastCheckIn.text = "Lỗi khi lưu dữ liệu"
+        }
     }
 }

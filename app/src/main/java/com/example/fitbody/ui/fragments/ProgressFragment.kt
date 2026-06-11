@@ -9,6 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.fitbody.R
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.utils.SessionManager
 import kotlin.math.abs
 
@@ -56,22 +57,26 @@ class ProgressFragment : Fragment() {
     }
 
     private fun loadBodyProgress() {
-        val sharedPreferences =
-            requireContext().getSharedPreferences(
-                "onboarding_data",
-                Context.MODE_PRIVATE
-            )
+        val dbHelper = DatabaseHelper(requireContext())
+        val cursor = dbHelper.getLatestProgress(userId)
 
-        val heightText =
-            sharedPreferences.getString("height_$userId", "")
+        var heightCm = 0.0
+        var weightKg = 0.0
 
-        val weightText =
-            sharedPreferences.getString("weight_$userId", "")
+        if (cursor.moveToFirst()) {
+            heightCm = cursor.getDouble(cursor.getColumnIndexOrThrow("height"))
+            weightKg = cursor.getDouble(cursor.getColumnIndexOrThrow("weight"))
+        }
+        cursor.close()
 
-        val goalWeightText =
-            sharedPreferences.getString("goal_weight_$userId", "")
+        if (heightCm <= 0 || weightKg <= 0) {
+            // Fallback to SharedPreferences if SQLite is empty
+            val sharedPreferences = requireContext().getSharedPreferences("onboarding_data", Context.MODE_PRIVATE)
+            heightCm = sharedPreferences.getString("height_$userId", "")?.toDoubleOrNull() ?: 0.0
+            weightKg = sharedPreferences.getString("weight_$userId", "")?.toDoubleOrNull() ?: 0.0
+        }
 
-        if (heightText.isNullOrEmpty() || weightText.isNullOrEmpty()) {
+        if (heightCm <= 0 || weightKg <= 0) {
             txtCurrentWeight.text = "Chưa có"
             txtBMI.text = "Chưa có"
             txtGoalWeight.text = "Chưa có"
@@ -81,22 +86,9 @@ class ProgressFragment : Fragment() {
             return
         }
 
-        val heightCm = heightText.toDoubleOrNull() ?: 0.0
-        val weightKg = weightText.toDoubleOrNull() ?: 0.0
-        val goalWeightKg = goalWeightText?.toDoubleOrNull() ?: getDefaultGoalWeight(weightKg)
-
-        if (heightCm <= 0 || weightKg <= 0) {
-            txtCurrentWeight.text = "Chưa có"
-            txtBMI.text = "Chưa có"
-            txtGoalWeight.text = "Chưa có"
-            txtGoalProgress.text = "0% đạt mục tiêu"
-            txtAdvice.text = "Dữ liệu chiều cao hoặc cân nặng chưa hợp lệ."
-            progressGoal.progress = 0
-            return
-        }
-
         val heightM = heightCm / 100
         val bmi = weightKg / (heightM * heightM)
+        val goalWeightKg = getDefaultGoalWeight(weightKg)
 
         val progressPercent = calculateGoalProgress(
             currentWeight = weightKg,

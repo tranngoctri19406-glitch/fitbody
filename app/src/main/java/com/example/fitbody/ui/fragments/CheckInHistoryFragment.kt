@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitbody.R
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.ui.adapter.CheckInAdapter
+import com.example.fitbody.utils.SessionManager
 
 class CheckInHistoryFragment : Fragment(R.layout.fragment_checkin_history) {
 
@@ -38,19 +40,16 @@ class CheckInHistoryFragment : Fragment(R.layout.fragment_checkin_history) {
     }
 
     private fun getCheckInHistory(): List<String> {
-        val sharedPreferences =
-            requireContext().getSharedPreferences(
-                "checkin_data",
-                Context.MODE_PRIVATE
-            )
+        val session = SessionManager(requireContext())
+        val userId = session.getUserId()
+        
+        val dbHelper = DatabaseHelper(requireContext())
+        val history = dbHelper.getCheckInHistoryList(userId)
 
-        val history =
-            sharedPreferences.getString("checkin_history", "")
-
-        return if (history.isNullOrEmpty()) {
+        return if (history.isEmpty()) {
             listOf("Chưa có lịch sử check-in")
         } else {
-            history.split("|")
+            history.map { "${it.checkin_time}" }
         }
     }
 }

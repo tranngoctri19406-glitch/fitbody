@@ -7,12 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.model.CartItem
 import com.example.fitbody.ui.adapter.CartAdapter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.fitbody.utils.SessionManager
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -54,38 +52,20 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun loadCart() {
-        RetrofitClient.instance.getCart(userId)
-            .enqueue(object : Callback<List<CartItem>> {
+        val session = SessionManager(this)
+        val currentUserId = session.getUserId()
 
-                override fun onResponse(
-                    call: Call<List<CartItem>>,
-                    response: Response<List<CartItem>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        cartList.clear()
-                        cartList.addAll(response.body()!!)
-                        adapter.notifyDataSetChanged()
-                        calculateTotal()
-                    } else {
-                        Toast.makeText(
-                            this@CartActivity,
-                            "Không lấy được giỏ hàng",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+        val dbHelper = DatabaseHelper(this)
+        val data = dbHelper.getCart(currentUserId)
 
-                override fun onFailure(
-                    call: Call<List<CartItem>>,
-                    t: Throwable
-                ) {
-                    Toast.makeText(
-                        this@CartActivity,
-                        "Lỗi kết nối: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        cartList.clear()
+        cartList.addAll(data)
+        adapter.notifyDataSetChanged()
+        calculateTotal()
+
+        if (data.isEmpty()) {
+            Toast.makeText(this, "Giỏ hàng trống", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun calculateTotal() {

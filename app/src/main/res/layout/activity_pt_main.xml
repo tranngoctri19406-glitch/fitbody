@@ -27,6 +27,24 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <ImageView
+        android:id="@+id/imgProfilePt"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop"
+        android:background="#333333"
+        android:contentDescription="Ảnh đại diện PT" />
+
+    <Button
+        android:id="@+id/btnChangeImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Đổi ảnh đại diện"
         android:layout_marginBottom="32dp" />
 
     <Button
@@ -35,11 +53,5 @@
         android:layout_height="wrap_content"
         android:text="Thêm bài tập"
         android:layout_marginBottom="16dp" />
-
-    <Button
-        android:id="@+id/btnOpenChat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Chat với người dùng" />
 
 </LinearLayout>

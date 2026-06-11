@@ -8,11 +8,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.SimpleResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.fitbody.database.DatabaseHelper
+import com.example.fitbody.utils.SessionManager
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -81,59 +78,25 @@ class ProductDetailActivity : AppCompatActivity() {
 
     private fun addToCart() {
         if (productId == 0) {
-            Toast.makeText(
-                this,
-                "Sản phẩm không hợp lệ",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show()
             return
         }
 
-        btnAddToCart.isEnabled = false
-        btnAddToCart.text = "ĐANG THÊM..."
+        val session = SessionManager(this)
+        val currentUserId = session.getUserId()
 
-        RetrofitClient.instance.addToCart(
-            userId,
-            productId
-        ).enqueue(object : Callback<SimpleResponse> {
+        if (currentUserId == 0) {
+            Toast.makeText(this, "Vui lòng đăng nhập để mua hàng", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-            override fun onResponse(
-                call: Call<SimpleResponse>,
-                response: Response<SimpleResponse>
-            ) {
-                btnAddToCart.isEnabled = true
-                btnAddToCart.text = "THÊM VÀO GIỎ HÀNG"
+        val dbHelper = DatabaseHelper(this)
+        val success = dbHelper.addToCart(currentUserId, productId)
 
-                if (response.isSuccessful && response.body() != null) {
-                    val result = response.body()!!
-
-                    Toast.makeText(
-                        this@ProductDetailActivity,
-                        result.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        this@ProductDetailActivity,
-                        "Lỗi phản hồi từ server",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            override fun onFailure(
-                call: Call<SimpleResponse>,
-                t: Throwable
-            ) {
-                btnAddToCart.isEnabled = true
-                btnAddToCart.text = "THÊM VÀO GIỎ HÀNG"
-
-                Toast.makeText(
-                    this@ProductDetailActivity,
-                    "Lỗi kết nối: ${t.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+        if (success) {
+            Toast.makeText(this, "Đã thêm vào giỏ hàng!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Lỗi khi thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
+        }
     }
 }

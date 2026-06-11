@@ -9,9 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.LoginResponse
-import com.example.fitbody.model.SimpleResponse
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.utils.SessionManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -112,27 +110,23 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun handleSocialLogin(socialId: String, provider: String, name: String, email: String) {
-        RetrofitClient.instance.socialLogin(email, name, socialId, provider)
-            .enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        val result = response.body()!!
-                        val session = SessionManager(this@RegisterActivity)
-                        session.saveLogin(result.username ?: name, result.role ?: "user", result.user_id ?: 0)
-                        
-                        // Chuyển hướng tới Onboarding hoặc Main giống LoginActivity
-                        val intent = Intent(this@RegisterActivity, com.example.fitbody.MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(this@RegisterActivity, "Đăng ký $provider thất bại", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        val dbHelper = DatabaseHelper(this)
+        var userId = dbHelper.getUserBySocialId(socialId, provider)
 
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Toast.makeText(this@RegisterActivity, "Lỗi kết nối server", Toast.LENGTH_SHORT).show()
-                }
-            })
+        if (userId == -1) {
+            userId = dbHelper.registerSocialUser(name, email, socialId, provider).toInt()
+        }
+
+        if (userId != -1) {
+            val session = SessionManager(this)
+            session.saveLogin(name, "user", userId)
+            
+            val intent = Intent(this, com.example.fitbody.MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "Đăng ký $provider thất bại", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun register() {
@@ -151,24 +145,14 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        btnRegister.isEnabled = false
+        val dbHelper = DatabaseHelper(this)
+        val result = dbHelper.registerUser(username, email, password)
 
-        RetrofitClient.instance.register(username, password, email)
-            .enqueue(object : Callback<SimpleResponse> {
-                override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
-                    btnRegister.isEnabled = true
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        Toast.makeText(this@RegisterActivity, "Đăng ký thành công!", Toast.LENGTH_SHORT).show()
-                        finish()
-                    } else {
-                        Toast.makeText(this@RegisterActivity, response.body()?.message ?: "Đăng ký thất bại", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
-                    btnRegister.isEnabled = true
-                    Toast.makeText(this@RegisterActivity, "Lỗi kết nối", Toast.LENGTH_SHORT).show()
-                }
-            })
+        if (result != -1L) {
+            Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show()
+            finish()
+        } else {
+            Toast.makeText(this, "Tên đăng nhập đã tồn tại hoặc lỗi", Toast.LENGTH_SHORT).show()
+        }
     }
 }

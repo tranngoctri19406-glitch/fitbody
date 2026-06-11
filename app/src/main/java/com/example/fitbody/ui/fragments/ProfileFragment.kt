@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.fitbody.R
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.ui.ChangePasswordActivity
 import com.example.fitbody.ui.EditProfileActivity
 import com.example.fitbody.ui.auth.LoginActivity
@@ -77,26 +78,23 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     }
 
     private fun loadProfileInfo() {
-        val sharedPreferences =
-            requireContext().getSharedPreferences(
-                "profile_data",
-                Context.MODE_PRIVATE
-            )
+        val session = SessionManager(requireContext())
+        val userId = session.getUserId()
 
-        val name =
-            sharedPreferences.getString(
-                "name",
-                "Trần An"
-            )
+        val dbHelper = DatabaseHelper(requireContext())
+        val cursor = dbHelper.getUserProfile(userId)
 
-        val email =
-            sharedPreferences.getString(
-                "email",
-                "FitBody Member"
-            )
-
-        txtProfileName.text = name
-        txtProfileRole.text = email
+        if (cursor.moveToFirst()) {
+            val name = cursor.getString(0)
+            val email = cursor.getString(1)
+            txtProfileName.text = name
+            txtProfileRole.text = email
+        } else {
+            // Fallback
+            txtProfileName.text = session.getUsername()
+            txtProfileRole.text = "Thành viên FitBody"
+        }
+        cursor.close()
     }
 
     private fun logout() {

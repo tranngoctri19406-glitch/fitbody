@@ -13,8 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitbody.R
 import com.example.fitbody.adapter.TrainerAdapter
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.SimpleResponse
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.model.Trainer
 import com.example.fitbody.ui.BMICalculatorActivity
 import com.example.fitbody.ui.CheckInActivity
@@ -127,42 +126,20 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadTrainers() {
-        RetrofitClient.instance.getTrainers()
-            .enqueue(object : Callback<List<Trainer>> {
+        val dbHelper = DatabaseHelper(requireContext())
+        val data = dbHelper.getAllTrainers()
 
-                override fun onResponse(
-                    call: Call<List<Trainer>>,
-                    response: Response<List<Trainer>>
-                ) {
-                    if (response.isSuccessful) {
-                        val data = response.body() ?: emptyList()
+        trainerList.clear()
+        trainerList.addAll(data)
+        trainerAdapter.notifyDataSetChanged()
 
-                        trainerList.clear()
-                        trainerList.addAll(data)
-
-                        trainerAdapter.notifyDataSetChanged()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Không tải được danh sách PT",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<List<Trainer>>,
-                    t: Throwable
-                ) {
-                    Log.e("API_ERROR", t.message.toString())
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Lỗi kết nối server",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        if (data.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                "Chưa có dữ liệu PT trong SQLite",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun addFavorite(trainerId: Int) {
@@ -178,30 +155,21 @@ class HomeFragment : Fragment() {
             return
         }
 
-        RetrofitClient.instance.addFavorite(userId, trainerId)
-            .enqueue(object : Callback<SimpleResponse> {
+        val dbHelper = DatabaseHelper(requireContext())
+        val success = dbHelper.addFavorite(userId, trainerId)
 
-                override fun onResponse(
-                    call: Call<SimpleResponse>,
-                    response: Response<SimpleResponse>
-                ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Đã thêm PT vào yêu thích ❤️",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                override fun onFailure(
-                    call: Call<SimpleResponse>,
-                    t: Throwable
-                ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Lỗi kết nối server",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        if (success) {
+            Toast.makeText(
+                requireContext(),
+                "Đã thêm PT vào yêu thích ❤️",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Lỗi lưu yêu thích",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }

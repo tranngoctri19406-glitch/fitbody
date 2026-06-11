@@ -86,15 +86,8 @@
                 android:text="Lịch tập"
                 android:textColor="#CCCCCC"
                 android:textSize="16sp"
-                android:layout_marginTop="12dp"/>
-
-            <Button
-                android:id="@+id/btnChatPT"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:text="💬 Chat với PT"
-                android:textStyle="bold"
-                android:layout_marginTop="18dp"/>
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"/>
 
             <TextView
                 android:layout_width="wrap_content"

@@ -7,11 +7,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.SimpleResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.fitbody.database.DatabaseHelper
+import com.example.fitbody.utils.SessionManager
 
 class ChangePasswordActivity : AppCompatActivity() {
 
@@ -65,60 +62,27 @@ class ChangePasswordActivity : AppCompatActivity() {
         changePasswordApi(oldPassword, newPassword)
     }
 
-    private fun changePasswordApi(
-        oldPassword: String,
-        newPassword: String
-    ) {
-        btnChangePassword.isEnabled = false
-        btnChangePassword.text = "ĐANG XỬ LÝ..."
-
-        RetrofitClient.instance.changePassword(
-            userId,
-            oldPassword,
-            newPassword
-        ).enqueue(object : Callback<SimpleResponse> {
-
-            override fun onResponse(
-                call: Call<SimpleResponse>,
-                response: Response<SimpleResponse>
-            ) {
-                btnChangePassword.isEnabled = true
-                btnChangePassword.text = "ĐỔI MẬT KHẨU"
-
-                if (response.isSuccessful && response.body() != null) {
-                    val result = response.body()!!
-
-                    Toast.makeText(
-                        this@ChangePasswordActivity,
-                        result.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    if (result.success) {
-                        finish()
-                    }
-                } else {
-                    Toast.makeText(
-                        this@ChangePasswordActivity,
-                        "Lỗi phản hồi từ server",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+    private fun changePasswordApi(oldPassword: String, newPassword: String) {
+        val session = SessionManager(this)
+        val currentUserId = session.getUserId()
+        val dbHelper = DatabaseHelper(this)
+        
+        // Simple logic for SQLite: check old password and update to new one
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT id FROM tbl_users WHERE id = ? AND password = ?", 
+            arrayOf(currentUserId.toString(), oldPassword))
+        
+        if (cursor.moveToFirst()) {
+            cursor.close()
+            val updateValues = android.content.ContentValues().apply { put("password", newPassword) }
+            val success = dbHelper.writableDatabase.update("tbl_users", updateValues, "id = ?", arrayOf(currentUserId.toString())) > 0
+            if (success) {
+                Toast.makeText(this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show()
+                finish()
             }
-
-            override fun onFailure(
-                call: Call<SimpleResponse>,
-                t: Throwable
-            ) {
-                btnChangePassword.isEnabled = true
-                btnChangePassword.text = "ĐỔI MẬT KHẨU"
-
-                Toast.makeText(
-                    this@ChangePasswordActivity,
-                    "Lỗi kết nối: ${t.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+        } else {
+            cursor.close()
+            Toast.makeText(this, "Mật khẩu cũ không chính xác", Toast.LENGTH_SHORT).show()
+        }
     }
 }

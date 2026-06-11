@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.model.Product
 import com.example.fitbody.ui.adapter.ProductAdapter
 import retrofit2.Call
@@ -81,36 +81,15 @@ class ShopActivity : AppCompatActivity() {
     }
 
     private fun loadProducts() {
-        RetrofitClient.instance.getProducts()
-            .enqueue(object : Callback<List<Product>> {
+        val dbHelper = DatabaseHelper(this)
+        val data = dbHelper.getAllProducts()
 
-                override fun onResponse(
-                    call: Call<List<Product>>,
-                    response: Response<List<Product>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        productList.clear()
-                        productList.addAll(response.body()!!)
-                        adapter.notifyDataSetChanged()
-                    } else {
-                        Toast.makeText(
-                            this@ShopActivity,
-                            "Không lấy được sản phẩm",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+        productList.clear()
+        productList.addAll(data)
+        adapter.notifyDataSetChanged()
 
-                override fun onFailure(
-                    call: Call<List<Product>>,
-                    t: Throwable
-                ) {
-                    Toast.makeText(
-                        this@ShopActivity,
-                        "Lỗi kết nối: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        if (data.isEmpty()) {
+            Toast.makeText(this, "Chưa có sản phẩm trong SQLite", Toast.LENGTH_SHORT).show()
+        }
     }
 }

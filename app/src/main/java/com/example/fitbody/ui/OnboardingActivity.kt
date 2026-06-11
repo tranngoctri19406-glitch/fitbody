@@ -18,6 +18,7 @@ import android.widget.NumberPicker
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.MainActivity
 import com.example.fitbody.R
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.utils.SessionManager
 
 class OnboardingActivity : AppCompatActivity() {
@@ -610,6 +611,12 @@ class OnboardingActivity : AppCompatActivity() {
             .putString("weight_$userId", weightValue.toString())
             .putString("height_$userId", heightValue.toString())
             .apply()
+
+        // Save to SQLite
+        val dbHelper = DatabaseHelper(this)
+        val hM = heightValue.toDouble() / 100
+        val bmi = weightValue.toDouble() / (hM * hM)
+        dbHelper.saveProgress(userId, weightValue.toDouble(), heightValue.toDouble(), bmi)
     }
 
     private fun finishOnboarding() {

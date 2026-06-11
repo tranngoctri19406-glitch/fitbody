@@ -7,6 +7,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.R
+import com.example.fitbody.database.DatabaseHelper
+import com.example.fitbody.utils.SessionManager
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -38,51 +40,34 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun loadProfile() {
-        val sharedPreferences =
-            getSharedPreferences("profile_data", MODE_PRIVATE)
+        val session = SessionManager(this)
+        val userId = session.getUserId()
+        val dbHelper = DatabaseHelper(this)
+        val cursor = dbHelper.getUserProfile(userId)
 
-        edtName.setText(
-            sharedPreferences.getString("name", "Trần An")
-        )
-
-        edtEmail.setText(
-            sharedPreferences.getString("email", "tranbaoan1805@gmail.com")
-        )
-
-        edtPhone.setText(
-            sharedPreferences.getString("phone", "")
-        )
+        if (cursor.moveToFirst()) {
+            edtName.setText(cursor.getString(0))
+            edtEmail.setText(cursor.getString(1))
+        }
+        cursor.close()
     }
 
     private fun saveProfile() {
         val name = edtName.text.toString().trim()
         val email = edtEmail.text.toString().trim()
-        val phone = edtPhone.text.toString().trim()
 
         if (name.isEmpty() || email.isEmpty()) {
-            Toast.makeText(
-                this,
-                "Vui lòng nhập họ tên và email",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Vui lòng nhập họ tên và email", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val sharedPreferences =
-            getSharedPreferences("profile_data", MODE_PRIVATE)
-
-        sharedPreferences.edit()
-            .putString("name", name)
-            .putString("email", email)
-            .putString("phone", phone)
-            .apply()
-
-        Toast.makeText(
-            this,
-            "Cập nhật thông tin thành công",
-            Toast.LENGTH_SHORT
-        ).show()
-
-        finish()
+        val session = SessionManager(this)
+        val userId = session.getUserId()
+        val dbHelper = DatabaseHelper(this)
+        
+        if (dbHelper.updateUserProfile(userId, name, email)) {
+            Toast.makeText(this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
 }

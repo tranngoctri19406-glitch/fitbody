@@ -11,9 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.fitbody.R
 import com.example.fitbody.adapter.WorkoutAdapter
-import com.example.fitbody.api.RetrofitClient
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.model.Workout
-import com.example.fitbody.ui.PTChatActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,7 +21,6 @@ class TrainerDetailActivity : AppCompatActivity() {
 
     private lateinit var recyclerWorkout: RecyclerView
     private lateinit var btnBack: TextView
-    private lateinit var btnChatPT: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +28,6 @@ class TrainerDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_trainer_detail)
 
         btnBack = findViewById(R.id.btnBack)
-        btnChatPT = findViewById(R.id.btnChatPT)
 
         val imgTrainer =
             findViewById<ImageView>(R.id.imgTrainer)
@@ -91,43 +88,13 @@ class TrainerDetailActivity : AppCompatActivity() {
             .load(image)
             .into(imgTrainer)
 
-        btnChatPT.setOnClickListener {
-            val intent = Intent(
-                this,
-                PTChatActivity::class.java
-            )
-
-            intent.putExtra("pt_id", trainerId)
-            intent.putExtra("pt_name", name)
-
-            startActivity(intent)
-        }
-
         loadWorkouts(trainerId)
     }
 
     private fun loadWorkouts(trainerId: Int) {
-        RetrofitClient.instance
-            .getWorkouts(trainerId)
-            .enqueue(object : Callback<List<Workout>> {
-
-                override fun onResponse(
-                    call: Call<List<Workout>>,
-                    response: Response<List<Workout>>
-                ) {
-                    if (response.isSuccessful) {
-                        recyclerWorkout.adapter =
-                            WorkoutAdapter(
-                                response.body() ?: emptyList()
-                            )
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<List<Workout>>,
-                    t: Throwable
-                ) {
-                }
-            })
+        val dbHelper = DatabaseHelper(this)
+        val data = dbHelper.getWorkoutsByTrainer(trainerId)
+        
+        recyclerWorkout.adapter = WorkoutAdapter(data)
     }
 }

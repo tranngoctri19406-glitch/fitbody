@@ -10,9 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.Schedule
-import com.example.fitbody.model.SimpleResponse
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.ui.adapter.ScheduleAdapter
 import com.example.fitbody.utils.SessionManager
 import retrofit2.Call
@@ -51,40 +49,15 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     }
 
     private fun loadSchedule() {
-        val userId =
-            SessionManager(requireContext()).getUserId()
+        val userId = SessionManager(requireContext()).getUserId()
+        val dbHelper = DatabaseHelper(requireContext())
+        val list = dbHelper.getSchedule(userId)
 
-        RetrofitClient.instance
-            .getSchedule(userId)
-            .enqueue(object : Callback<List<Schedule>> {
-                override fun onResponse(
-                    call: Call<List<Schedule>>,
-                    response: Response<List<Schedule>>
-                ) {
-                    if (response.isSuccessful) {
-                        val list = response.body() ?: emptyList()
-
-                        recyclerSchedule.adapter =
-                            ScheduleAdapter(
-                                list,
-                                { schedule ->
-                                    completeSchedule(schedule.id)
-                                },
-                                { schedule ->
-                                    deleteSchedule(schedule.id)
-                                }
-                            )
-                    }
-                }
-
-                override fun onFailure(call: Call<List<Schedule>>, t: Throwable) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Không tải được lịch tập",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        recyclerSchedule.adapter = ScheduleAdapter(
+            list,
+            { schedule -> completeSchedule(schedule.id) },
+            { schedule -> deleteSchedule(schedule.id) }
+        )
     }
 
     private fun addSchedule() {
@@ -92,97 +65,35 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         val workoutPlan = edtWorkoutPlan.text.toString().trim()
 
         if (dayName.isEmpty() || workoutPlan.isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                "Vui lòng nhập đầy đủ lịch tập",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Vui lòng nhập đầy đủ lịch tập", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val userId =
-            SessionManager(requireContext()).getUserId()
+        val userId = SessionManager(requireContext()).getUserId()
+        val dbHelper = DatabaseHelper(requireContext())
+        val result = dbHelper.addSchedule(userId, dayName, workoutPlan)
 
-        RetrofitClient.instance
-            .addSchedule(userId, dayName, workoutPlan)
-            .enqueue(object : Callback<SimpleResponse> {
-                override fun onResponse(
-                    call: Call<SimpleResponse>,
-                    response: Response<SimpleResponse>
-                ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Đã thêm lịch tập",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    edtDayName.text.clear()
-                    edtWorkoutPlan.text.clear()
-
-                    loadSchedule()
-                }
-
-                override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Lỗi thêm lịch tập",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        if (result != -1L) {
+            Toast.makeText(requireContext(), "Đã thêm lịch tập", Toast.LENGTH_SHORT).show()
+            edtDayName.text.clear()
+            edtWorkoutPlan.text.clear()
+            loadSchedule()
+        }
     }
 
     private fun completeSchedule(id: Int) {
-        RetrofitClient.instance
-            .completeSchedule(id)
-            .enqueue(object : Callback<SimpleResponse> {
-                override fun onResponse(
-                    call: Call<SimpleResponse>,
-                    response: Response<SimpleResponse>
-                ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Đã hoàn thành lịch tập",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    loadSchedule()
-                }
-
-                override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Lỗi cập nhật",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        val dbHelper = DatabaseHelper(requireContext())
+        if (dbHelper.completeSchedule(id)) {
+            Toast.makeText(requireContext(), "Đã hoàn thành lịch tập", Toast.LENGTH_SHORT).show()
+            loadSchedule()
+        }
     }
 
     private fun deleteSchedule(id: Int) {
-        RetrofitClient.instance
-            .deleteSchedule(id)
-            .enqueue(object : Callback<SimpleResponse> {
-                override fun onResponse(
-                    call: Call<SimpleResponse>,
-                    response: Response<SimpleResponse>
-                ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Đã xóa lịch tập",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    loadSchedule()
-                }
-
-                override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Lỗi xóa lịch tập",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        val dbHelper = DatabaseHelper(requireContext())
+        if (dbHelper.deleteSchedule(id)) {
+            Toast.makeText(requireContext(), "Đã xóa lịch tập", Toast.LENGTH_SHORT).show()
+            loadSchedule()
+        }
     }
 }

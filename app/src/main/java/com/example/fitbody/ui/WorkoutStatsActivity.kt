@@ -6,12 +6,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.WorkoutStatsResponse
+import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.utils.SessionManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class WorkoutStatsActivity : AppCompatActivity() {
 
@@ -61,55 +57,27 @@ class WorkoutStatsActivity : AppCompatActivity() {
     }
 
     private fun loadWorkoutStats() {
-        RetrofitClient.instance.getWorkoutStats(userId)
-            .enqueue(object : Callback<WorkoutStatsResponse> {
+        val dbHelper = DatabaseHelper(this)
+        val data = dbHelper.getWorkoutStats(userId)
 
-                override fun onResponse(
-                    call: Call<WorkoutStatsResponse>,
-                    response: Response<WorkoutStatsResponse>
-                ) {
-                    if (response.isSuccessful && response.body()?.success == true) {
-                        val data = response.body()!!
+        txtTotalWorkout.text = data.total_workouts.toString()
+        txtTotalCalories.text = data.total_calories.toString()
+        txtStreak.text = "${data.streak_days} ngày 🔥"
+        txtMonthPercent.text = "${data.month_progress}% mục tiêu tháng"
+        progressMonth.progress = data.month_progress
 
-                        txtTotalWorkout.text = data.total_workouts.toString()
-                        txtTotalCalories.text = data.total_calories.toString()
-                        txtStreak.text = "${data.streak_days} ngày 🔥"
-                        txtMonthPercent.text = "${data.month_progress}% mục tiêu tháng"
-                        progressMonth.progress = data.month_progress
+        txtAdvice.text = when {
+            data.total_workouts == 0 ->
+                "Bạn chưa có buổi tập nào. Hãy bắt đầu check-in buổi đầu tiên nhé."
 
-                        txtAdvice.text = when {
-                            data.total_workouts == 0 ->
-                                "Bạn chưa có buổi tập nào. Hãy bắt đầu check-in buổi đầu tiên nhé."
+            data.month_progress >= 80 ->
+                "Rất tốt! Bạn đang gần hoàn thành mục tiêu tháng."
 
-                            data.month_progress >= 80 ->
-                                "Rất tốt! Bạn đang gần hoàn thành mục tiêu tháng."
+            data.month_progress >= 50 ->
+                "Bạn đang làm khá tốt, hãy duy trì lịch tập đều hơn."
 
-                            data.month_progress >= 50 ->
-                                "Bạn đang làm khá tốt, hãy duy trì lịch tập đều hơn."
-
-                            else ->
-                                "Bạn nên tập đều hơn để cải thiện tiến độ tháng."
-                        }
-
-                    } else {
-                        Toast.makeText(
-                            this@WorkoutStatsActivity,
-                            "Không lấy được dữ liệu thống kê",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<WorkoutStatsResponse>,
-                    t: Throwable
-                ) {
-                    Toast.makeText(
-                        this@WorkoutStatsActivity,
-                        "Lỗi kết nối: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+            else ->
+                "Bạn nên tập đều hơn để cải thiện tiến độ tháng."
+        }
     }
 }
