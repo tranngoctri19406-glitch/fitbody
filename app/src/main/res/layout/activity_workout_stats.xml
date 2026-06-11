@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/toolbar_fitbody"/>
+        <include layout="@layout/toolbar_fitbody" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,31 +20,145 @@
             android:padding="24dp">
 
             <TextView
-                android:id="@+id/txtTotalWorkout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tổng số buổi tập: 0"
+                android:text="Tiến độ tập luyện của bạn"
                 android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:padding="16dp"/>
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="vertical"
+                    android:background="#1E1E1E"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tổng buổi"
+                        android:textColor="#AAAAAA"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/txtTotalWorkout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="32sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical"
+                    android:background="#1E1E1E"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hoàn thành"
+                        android:textColor="#AAAAAA"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/txtCompletedWorkout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#4CAF50"
+                        android:textSize="32sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="vertical"
+                android:background="#1E1E1E"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chưa hoàn thành"
+                    android:textColor="#AAAAAA"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/txtPendingWorkout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#FF5252"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="vertical"
+                android:background="#1E1E1E"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tỷ lệ hoàn thành"
+                    android:textColor="#AAAAAA"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/txtProgressPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0%"
+                    android:textColor="#7C4DFF"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp" />
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/txtCompletedWorkout"
+                android:id="@+id/txtAdvice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Đã hoàn thành: 0"
+                android:text="Đang tải dữ liệu..."
                 android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:padding="16dp"/>
-
-            <TextView
-                android:id="@+id/txtPendingWorkout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Chưa hoàn thành: 0"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:padding="16dp"/>
+                android:textSize="16sp"
+                android:background="#1E1E1E"
+                android:padding="18dp" />
 
         </LinearLayout>
 

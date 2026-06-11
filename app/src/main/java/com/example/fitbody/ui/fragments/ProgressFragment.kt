@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.fitbody.R
 import com.example.fitbody.api.RetrofitClient
 import com.example.fitbody.model.Progress
+import com.example.fitbody.utils.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,9 +60,11 @@ class ProgressFragment : Fragment() {
     }
 
     private fun loadProgress() {
+        val session = SessionManager(requireContext())
+        val userId = session.getUserId()
 
         RetrofitClient.instance
-            .getProgress()
+            .getProgress(userId)
             .enqueue(object : Callback<List<Progress>> {
 
                 override fun onResponse(
@@ -88,9 +91,15 @@ class ProgressFragment : Fragment() {
                                 progress.progress_percent
 
                         } else {
+                            // Nếu chưa có dữ liệu thật, có thể hiện 0 hoặc thông báo
+                            txtWorkoutCount.text = "0"
+                            txtCalories.text = "0 kcal"
+                            txtStreak.text = "0 ngày 🔥"
+                            progressWorkout.progress = 0
+                            
                             Toast.makeText(
                                 requireContext(),
-                                "Chưa có dữ liệu tiến độ",
+                                "Bắt đầu tập luyện để thấy tiến độ nhé!",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

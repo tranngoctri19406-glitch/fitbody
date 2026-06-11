@@ -18,6 +18,7 @@ import android.widget.NumberPicker
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.MainActivity
 import com.example.fitbody.R
+import com.example.fitbody.utils.SessionManager
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -269,6 +270,7 @@ class OnboardingActivity : AppCompatActivity() {
         pickerHeight.maxValue = 220
         pickerHeight.value = heightValue
         pickerHeight.wrapSelectorWheel = true
+
 
         // Thiết lập màu chữ đậm hơn và kích thước to hơn (dành cho Android 10 trở lên)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
@@ -598,9 +600,23 @@ class OnboardingActivity : AppCompatActivity() {
         return params
     }
 
+    private fun saveBodyInfo() {
+        val session = SessionManager(this)
+        val userId = session.getUserId()
+
+        val sharedPreferences = getSharedPreferences("onboarding_data", MODE_PRIVATE)
+
+        sharedPreferences.edit()
+            .putString("weight_$userId", weightValue.toString())
+            .putString("height_$userId", heightValue.toString())
+            .apply()
+    }
+
     private fun finishOnboarding() {
-        val userId =
-            intent.getIntExtra("user_id", 0)
+        saveBodyInfo()
+
+        val session = SessionManager(this)
+        val userId = session.getUserId()
 
         val sharedPreferences =
             getSharedPreferences(
@@ -616,8 +632,6 @@ class OnboardingActivity : AppCompatActivity() {
             .putString("gender_$userId", gender)
             .putString("goal_$userId", goals.joinToString(", "))
             .putString("focus_area_$userId", focusArea)
-            .putString("height_$userId", height)
-            .putString("weight_$userId", weight)
             .apply()
 
         val intent =

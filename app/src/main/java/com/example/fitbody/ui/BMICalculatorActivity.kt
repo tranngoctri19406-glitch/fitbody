@@ -1,5 +1,6 @@
 package com.example.fitbody.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -7,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.R
+import com.example.fitbody.utils.SessionManager
 
 class BMICalculatorActivity : AppCompatActivity() {
 
@@ -17,6 +19,8 @@ class BMICalculatorActivity : AppCompatActivity() {
     private lateinit var btnCalculateBMI: Button
     private lateinit var txtBMIResult: TextView
     private lateinit var txtBMIStatus: TextView
+
+    private var userId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,63 +36,106 @@ class BMICalculatorActivity : AppCompatActivity() {
 
         txtTitle.text = "BMI Calculator"
 
-        // Tự động tải dữ liệu đã có
-        loadSavedDataAndCalculate()
+        val session = SessionManager(this)
+        userId = session.getUserId()
 
         btnBack.setOnClickListener {
             finish()
         }
 
         btnCalculateBMI.setOnClickListener {
-            calculateBMI()
+            calculateBMI(saveData = true)
         }
+
+        loadSavedDataAndCalculate()
     }
 
     private fun loadSavedDataAndCalculate() {
-        val sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE)
-        val savedWeight = sharedPreferences.getString("weight", "")
-        val savedHeight = sharedPreferences.getString("height", "")
+        val sharedPreferences =
+            getSharedPreferences("onboarding_data", Context.MODE_PRIVATE)
+
+        val savedWeight =
+            sharedPreferences.getString("weight_$userId", "")
+
+        val savedHeight =
+            sharedPreferences.getString("height_$userId", "")
+
+        if (!savedWeight.isNullOrEmpty()) {
+            edtWeight.setText(savedWeight)
+        }
+
+        if (!savedHeight.isNullOrEmpty()) {
+            edtHeight.setText(savedHeight)
+        }
 
         if (!savedWeight.isNullOrEmpty() && !savedHeight.isNullOrEmpty()) {
-            edtWeight.setText(savedWeight)
-            edtHeight.setText(savedHeight)
-            
-            // Tự động tính toán luôn
-            calculateBMI()
+            calculateBMI(saveData = false)
         }
     }
 
-    private fun calculateBMI() {
+    private fun calculateBMI(saveData: Boolean) {
         val heightText = edtHeight.text.toString().trim()
         val weightText = edtWeight.text.toString().trim()
 
         if (heightText.isEmpty() || weightText.isEmpty()) {
             Toast.makeText(
                 this,
-                "Vui lòng nhập đầy đủ chiều cao và cân nặng",
+                "Vui lòng nhập chiều cao và cân nặng",
                 Toast.LENGTH_SHORT
             ).show()
             return
         }
 
-        val heightCm = heightText.toDouble()
-        val weightKg = weightText.toDouble()
+        try {
+            val heightCm = heightText.toDouble()
+            val weightKg = weightText.toDouble()
 
-        if (heightCm <= 0 || weightKg <= 0) {
+            if (heightCm <= 0 || weightKg <= 0) {
+                Toast.makeText(
+                    this,
+                    "Chiều cao và cân nặng phải lớn hơn 0",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return
+            }
+
+            val heightM = heightCm / 100
+            val bmi = weightKg / (heightM * heightM)
+            val bmiText = String.format("%.2f", bmi)
+
+            txtBMIResult.text = "BMI của bạn: $bmiText"
+            txtBMIStatus.text = getBMIStatus(bmi)
+
+            if (saveData) {
+                saveHeightAndWeight(heightText, weightText)
+
+                Toast.makeText(
+                    this,
+                    "Đã cập nhật chiều cao và cân nặng",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+        } catch (e: Exception) {
             Toast.makeText(
                 this,
-                "Chiều cao và cân nặng phải lớn hơn 0",
+                "Vui lòng nhập số hợp lệ",
                 Toast.LENGTH_SHORT
             ).show()
-            return
         }
+    }
 
-        val heightM = heightCm / 100
-        val bmi = weightKg / (heightM * heightM)
-        val bmiText = String.format("%.2f", bmi)
+    private fun saveHeightAndWeight(
+        height: String,
+        weight: String
+    ) {
+        val sharedPreferences =
+            getSharedPreferences("onboarding_data", Context.MODE_PRIVATE)
 
-        txtBMIResult.text = "BMI của bạn: $bmiText"
-        txtBMIStatus.text = getBMIStatus(bmi)
+        sharedPreferences.edit()
+            .putString("height_$userId", height)
+            .putString("weight_$userId", weight)
+            .apply()
     }
 
     private fun getBMIStatus(bmi: Double): String {

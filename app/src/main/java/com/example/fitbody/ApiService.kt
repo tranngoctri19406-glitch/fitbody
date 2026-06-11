@@ -11,6 +11,7 @@ import com.example.fitbody.model.Message
 import com.example.fitbody.model.ChatUser
 import com.example.fitbody.model.Product
 import com.example.fitbody.model.CartItem
+import com.example.fitbody.model.WorkoutStatsResponse
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -30,7 +31,9 @@ interface ApiService {
     ): Call<List<Workout>>
 
     @GET("get_progress.php")
-    fun getProgress(): Call<List<Progress>>
+    fun getProgress(
+        @Query("user_id") userId: Int
+    ): Call<List<Progress>>
 
     @FormUrlEncoded
     @POST("login.php")
@@ -146,4 +149,9 @@ interface ApiService {
     fun getCart(
         @Query("user_id") userId: Int
     ): Call<List<CartItem>>
+
+    @GET("get_workout_stats.php")
+    fun getWorkoutStats(
+        @Query("user_id") userId: Int
+    ): Call<WorkoutStatsResponse>
 }
