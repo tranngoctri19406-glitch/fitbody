@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#121212">
@@ -9,167 +7,147 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:padding="24dp">
 
+        <!-- AVATAR -->
         <TextView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:background="#7C4DFF"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/bg_circle_avatar"
             android:gravity="center"
             android:text="F"
             android:textColor="#FFFFFF"
-            android:textSize="52sp"
-            android:textStyle="bold"/>
+            android:textSize="42sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtProfileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Trần An"
             android:textColor="#FFFFFF"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:layout_marginTop="18dp"/>
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtProfileRole"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:text="FitBody Member"
             android:textColor="#AAAAAA"
-            android:textSize="16sp"
-            android:layout_marginTop="6dp"/>
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/txtEditProfile"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Chỉnh sửa hồ sơ"
+            android:textColor="#7C4DFF" />
+
+        <!-- NHÓM: CÀI ĐẶT -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="12dp"
+            android:text="Cài đặt"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_home"
             android:orientation="vertical"
-            android:background="#1E1E1E"
-            android:padding="20dp"
-            android:layout_marginTop="30dp">
-
-            <TextView
-                android:id="@+id/txtProgress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📈 Tiến độ tập luyện"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtWorkoutStats"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📊 Thống kê tập luyện"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtSchedule"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📅 Lịch tập cá nhân"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtCheckIn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📷 QR Check-in"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtCheckInHistory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📋 Lịch sử Check-in"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtBMI"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📏 BMI Calculator"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtPremium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🔥 Premium Plan"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtShop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🛒 Shop FitBody"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtEditProfile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="👤 Đổi thông tin cá nhân"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtChangePassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🔐 Đổi mật khẩu"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
-
-            <TextView
-                android:id="@+id/txtSettings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="⚙️ Cài đặt"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/txtDarkMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="16dp"
                 android:text="🌙 Chế độ tối"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="14dp"/>
+                android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/btnLogout"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:text="Đăng xuất"
-                android:textStyle="bold"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="#333333" />
+
+            <TextView
+                android:id="@+id/txtNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="🔔 Thông báo"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#FF5252"
-                android:layout_marginTop="18dp"/>
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="#333333" />
+
+            <TextView
+                android:id="@+id/txtChangePassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="🔒 Đổi mật khẩu"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="#333333" />
+
+            <TextView
+                android:id="@+id/txtTerms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="📄 Điều khoản sử dụng"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="#333333" />
+
+            <TextView
+                android:id="@+id/txtVersion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="ℹ️ Phiên bản ứng dụng (v1.0.0)"
+                android:textColor="#AAAAAA"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="40dp"
+            android:backgroundTint="#FF5252"
+            android:text="Đăng xuất"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
 
+    </LinearLayout>
 </ScrollView>

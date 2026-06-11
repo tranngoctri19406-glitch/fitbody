@@ -10,11 +10,17 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <Button
+        <TextView
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Quay lại" />
+            android:text="← Quay lại"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:layout_marginStart="-12dp"
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="match_parent"
