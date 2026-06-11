@@ -72,5 +72,9 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.zxing:core:3.5.3")
 
+    // Google & Facebook Login
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("com.facebook.android:facebook-login:latest.release")
+
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }

@@ -43,6 +43,23 @@ interface ApiService {
     ): Call<LoginResponse>
 
     @FormUrlEncoded
+    @POST("register.php")
+    fun register(
+        @Field("username") username: String,
+        @Field("password") password: String,
+        @Field("email") email: String
+    ): Call<SimpleResponse>
+
+    @FormUrlEncoded
+    @POST("social_login.php")
+    fun socialLogin(
+        @Field("email") email: String,
+        @Field("username") username: String,
+        @Field("social_id") socialId: String,
+        @Field("provider") provider: String
+    ): Call<LoginResponse>
+
+    @FormUrlEncoded
     @POST("add_favorite.php")
     fun addFavorite(
         @Field("user_id") userId: Int,

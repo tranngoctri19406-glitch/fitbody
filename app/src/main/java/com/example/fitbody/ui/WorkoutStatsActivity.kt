@@ -1,12 +1,13 @@
 package com.example.fitbody.ui
 
 import android.os.Bundle
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitbody.R
 import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.Schedule
+import com.example.fitbody.model.WorkoutStatsResponse
 import com.example.fitbody.utils.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,10 +18,11 @@ class WorkoutStatsActivity : AppCompatActivity() {
     private lateinit var btnBack: TextView
     private lateinit var txtTitle: TextView
     private lateinit var txtTotalWorkout: TextView
-    private lateinit var txtCompletedWorkout: TextView
-    private lateinit var txtPendingWorkout: TextView
-    private lateinit var txtProgressPercent: TextView
+    private lateinit var txtTotalCalories: TextView
+    private lateinit var txtStreak: TextView
+    private lateinit var txtMonthPercent: TextView
     private lateinit var txtAdvice: TextView
+    private lateinit var progressMonth: ProgressBar
 
     private var userId: Int = 0
 
@@ -31,12 +33,13 @@ class WorkoutStatsActivity : AppCompatActivity() {
         btnBack = findViewById(R.id.btnBack)
         txtTitle = findViewById(R.id.txtTitle)
         txtTotalWorkout = findViewById(R.id.txtTotalWorkout)
-        txtCompletedWorkout = findViewById(R.id.txtCompletedWorkout)
-        txtPendingWorkout = findViewById(R.id.txtPendingWorkout)
-        txtProgressPercent = findViewById(R.id.txtProgressPercent)
+        txtTotalCalories = findViewById(R.id.txtTotalCalories)
+        txtStreak = findViewById(R.id.txtStreak)
+        txtMonthPercent = findViewById(R.id.txtMonthPercent)
         txtAdvice = findViewById(R.id.txtAdvice)
+        progressMonth = findViewById(R.id.progressMonth)
 
-        txtTitle.text = "Thống kê tập luyện"
+        txtTitle.text = "Tiến độ tập luyện"
 
         val session = SessionManager(this)
         userId = session.getUserId()
@@ -58,42 +61,34 @@ class WorkoutStatsActivity : AppCompatActivity() {
     }
 
     private fun loadWorkoutStats() {
-        RetrofitClient.instance.getSchedule(userId)
-            .enqueue(object : Callback<List<Schedule>> {
+        RetrofitClient.instance.getWorkoutStats(userId)
+            .enqueue(object : Callback<WorkoutStatsResponse> {
 
                 override fun onResponse(
-                    call: Call<List<Schedule>>,
-                    response: Response<List<Schedule>>
+                    call: Call<WorkoutStatsResponse>,
+                    response: Response<WorkoutStatsResponse>
                 ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        val list = response.body()!!
+                    if (response.isSuccessful && response.body()?.success == true) {
+                        val data = response.body()!!
 
-                        val total = list.size
-
-                        val completed = list.count {
-                            it.status.equals("completed", true) ||
-                                    it.status.equals("done", true) ||
-                                    it.status.equals("hoàn thành", true)
-                        }
-
-                        val pending = total - completed
-
-                        val percent = if (total > 0) {
-                            (completed * 100) / total
-                        } else {
-                            0
-                        }
-
-                        txtTotalWorkout.text = total.toString()
-                        txtCompletedWorkout.text = completed.toString()
-                        txtPendingWorkout.text = pending.toString()
-                        txtProgressPercent.text = "$percent%"
+                        txtTotalWorkout.text = data.total_workouts.toString()
+                        txtTotalCalories.text = data.total_calories.toString()
+                        txtStreak.text = "${data.streak_days} ngày 🔥"
+                        txtMonthPercent.text = "${data.month_progress}% mục tiêu tháng"
+                        progressMonth.progress = data.month_progress
 
                         txtAdvice.text = when {
-                            total == 0 -> "Bạn chưa có lịch tập nào."
-                            percent >= 80 -> "Rất tốt! Bạn đang duy trì tập luyện ổn định."
-                            percent >= 50 -> "Bạn đang làm khá tốt, hãy cố gắng hoàn thành thêm lịch tập."
-                            else -> "Bạn nên tập đều hơn để đạt mục tiêu sức khỏe."
+                            data.total_workouts == 0 ->
+                                "Bạn chưa có buổi tập nào. Hãy bắt đầu check-in buổi đầu tiên nhé."
+
+                            data.month_progress >= 80 ->
+                                "Rất tốt! Bạn đang gần hoàn thành mục tiêu tháng."
+
+                            data.month_progress >= 50 ->
+                                "Bạn đang làm khá tốt, hãy duy trì lịch tập đều hơn."
+
+                            else ->
+                                "Bạn nên tập đều hơn để cải thiện tiến độ tháng."
                         }
 
                     } else {
@@ -106,7 +101,7 @@ class WorkoutStatsActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(
-                    call: Call<List<Schedule>>,
+                    call: Call<WorkoutStatsResponse>,
                     t: Throwable
                 ) {
                     Toast.makeText(

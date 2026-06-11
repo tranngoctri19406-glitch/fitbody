@@ -1,128 +1,178 @@
 package com.example.fitbody.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.fitbody.R
-import com.example.fitbody.api.RetrofitClient
-import com.example.fitbody.model.Progress
 import com.example.fitbody.utils.SessionManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlin.math.abs
 
 class ProgressFragment : Fragment() {
 
     private lateinit var btnBack: TextView
-    private lateinit var txtWorkoutCount: TextView
-    private lateinit var txtCalories: TextView
-    private lateinit var txtStreak: TextView
-    private lateinit var progressWorkout: ProgressBar
+    private lateinit var txtCurrentWeight: TextView
+    private lateinit var txtBMI: TextView
+    private lateinit var txtGoalWeight: TextView
+    private lateinit var txtGoalProgress: TextView
+    private lateinit var txtAdvice: TextView
+    private lateinit var progressGoal: ProgressBar
+
+    private var userId: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        val view =
-            inflater.inflate(
-                R.layout.fragment_progress,
-                container,
-                false
-            )
+        val view = inflater.inflate(
+            R.layout.fragment_progress,
+            container,
+            false
+        )
 
         btnBack = view.findViewById(R.id.btnBack)
-        txtWorkoutCount =
-            view.findViewById(R.id.txtWorkoutCount)
+        txtCurrentWeight = view.findViewById(R.id.txtCurrentWeight)
+        txtBMI = view.findViewById(R.id.txtBMI)
+        txtGoalWeight = view.findViewById(R.id.txtGoalWeight)
+        txtGoalProgress = view.findViewById(R.id.txtGoalProgress)
+        txtAdvice = view.findViewById(R.id.txtAdvice)
+        progressGoal = view.findViewById(R.id.progressGoal)
 
-        txtCalories =
-            view.findViewById(R.id.txtCalories)
-
-        txtStreak =
-            view.findViewById(R.id.txtStreak)
-
-        progressWorkout =
-            view.findViewById(R.id.progressWorkout)
+        val session = SessionManager(requireContext())
+        userId = session.getUserId()
 
         btnBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        loadProgress()
+        loadBodyProgress()
 
         return view
     }
 
-    private fun loadProgress() {
-        val session = SessionManager(requireContext())
-        val userId = session.getUserId()
+    private fun loadBodyProgress() {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(
+                "onboarding_data",
+                Context.MODE_PRIVATE
+            )
 
-        RetrofitClient.instance
-            .getProgress(userId)
-            .enqueue(object : Callback<List<Progress>> {
+        val heightText =
+            sharedPreferences.getString("height_$userId", "")
 
-                override fun onResponse(
-                    call: Call<List<Progress>>,
-                    response: Response<List<Progress>>
-                ) {
-                    if (response.isSuccessful) {
+        val weightText =
+            sharedPreferences.getString("weight_$userId", "")
 
-                        val progress =
-                            response.body()?.firstOrNull()
+        val goalWeightText =
+            sharedPreferences.getString("goal_weight_$userId", "")
 
-                        if (progress != null) {
+        if (heightText.isNullOrEmpty() || weightText.isNullOrEmpty()) {
+            txtCurrentWeight.text = "Chưa có"
+            txtBMI.text = "Chưa có"
+            txtGoalWeight.text = "Chưa có"
+            txtGoalProgress.text = "0% đạt mục tiêu"
+            txtAdvice.text = "Bạn cần cập nhật chiều cao và cân nặng để xem tiến độ cơ thể."
+            progressGoal.progress = 0
+            return
+        }
 
-                            txtWorkoutCount.text =
-                                progress.workout_count.toString()
+        val heightCm = heightText.toDoubleOrNull() ?: 0.0
+        val weightKg = weightText.toDoubleOrNull() ?: 0.0
+        val goalWeightKg = goalWeightText?.toDoubleOrNull() ?: getDefaultGoalWeight(weightKg)
 
-                            txtCalories.text =
-                                "${progress.calories_burned} kcal"
+        if (heightCm <= 0 || weightKg <= 0) {
+            txtCurrentWeight.text = "Chưa có"
+            txtBMI.text = "Chưa có"
+            txtGoalWeight.text = "Chưa có"
+            txtGoalProgress.text = "0% đạt mục tiêu"
+            txtAdvice.text = "Dữ liệu chiều cao hoặc cân nặng chưa hợp lệ."
+            progressGoal.progress = 0
+            return
+        }
 
-                            txtStreak.text =
-                                "${progress.streak_days} ngày 🔥"
+        val heightM = heightCm / 100
+        val bmi = weightKg / (heightM * heightM)
 
-                            progressWorkout.progress =
-                                progress.progress_percent
+        val progressPercent = calculateGoalProgress(
+            currentWeight = weightKg,
+            goalWeight = goalWeightKg
+        )
 
-                        } else {
-                            // Nếu chưa có dữ liệu thật, có thể hiện 0 hoặc thông báo
-                            txtWorkoutCount.text = "0"
-                            txtCalories.text = "0 kcal"
-                            txtStreak.text = "0 ngày 🔥"
-                            progressWorkout.progress = 0
-                            
-                            Toast.makeText(
-                                requireContext(),
-                                "Bắt đầu tập luyện để thấy tiến độ nhé!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+        txtCurrentWeight.text = "${formatNumber(weightKg)} kg"
+        txtBMI.text = String.format("%.2f", bmi)
+        txtGoalWeight.text = "${formatNumber(goalWeightKg)} kg"
+        txtGoalProgress.text = "$progressPercent% đạt mục tiêu"
+        progressGoal.progress = progressPercent
 
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Lỗi tải tiến độ",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+        txtAdvice.text = getHealthAdvice(bmi, weightKg, goalWeightKg)
+    }
 
-                override fun onFailure(
-                    call: Call<List<Progress>>,
-                    t: Throwable
-                ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Không kết nối được server",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+    private fun getDefaultGoalWeight(currentWeight: Double): Double {
+        return if (currentWeight > 65) {
+            currentWeight - 5
+        } else {
+            currentWeight + 3
+        }
+    }
+
+    private fun calculateGoalProgress(
+        currentWeight: Double,
+        goalWeight: Double
+    ): Int {
+        val startWeight = if (currentWeight > goalWeight) {
+            goalWeight + 5
+        } else {
+            goalWeight - 3
+        }
+
+        val totalDistance = abs(startWeight - goalWeight)
+        val currentDistance = abs(currentWeight - goalWeight)
+
+        if (totalDistance == 0.0) return 100
+
+        val progress = ((totalDistance - currentDistance) / totalDistance) * 100
+
+        return progress.toInt().coerceIn(0, 100)
+    }
+
+    private fun getHealthAdvice(
+        bmi: Double,
+        currentWeight: Double,
+        goalWeight: Double
+    ): String {
+        val goalText = if (currentWeight > goalWeight) {
+            "giảm cân"
+        } else if (currentWeight < goalWeight) {
+            "tăng cân"
+        } else {
+            "duy trì cân nặng"
+        }
+
+        return when {
+            bmi < 18.5 ->
+                "BMI của bạn đang thấp. Bạn nên ăn đủ chất, tăng protein và tập luyện đều để $goalText."
+
+            bmi < 25 ->
+                "BMI của bạn đang bình thường. Hãy duy trì thói quen tập luyện và ăn uống hợp lý để $goalText."
+
+            bmi < 30 ->
+                "BMI của bạn đang hơi cao. Bạn nên kiểm soát calo, tập cardio và tập sức mạnh đều đặn để $goalText."
+
+            else ->
+                "BMI của bạn đang cao. Bạn nên giảm đồ ngọt, đồ chiên dầu và tập luyện đều hơn để cải thiện sức khỏe."
+        }
+    }
+
+    private fun formatNumber(value: Double): String {
+        return if (value % 1.0 == 0.0) {
+            value.toInt().toString()
+        } else {
+            String.format("%.1f", value)
+        }
     }
 }
