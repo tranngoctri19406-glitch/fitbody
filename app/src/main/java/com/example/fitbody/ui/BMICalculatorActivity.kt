@@ -32,11 +32,28 @@ class BMICalculatorActivity : AppCompatActivity() {
 
         txtTitle.text = "BMI Calculator"
 
+        // Tự động tải dữ liệu đã có
+        loadSavedDataAndCalculate()
+
         btnBack.setOnClickListener {
             finish()
         }
 
         btnCalculateBMI.setOnClickListener {
+            calculateBMI()
+        }
+    }
+
+    private fun loadSavedDataAndCalculate() {
+        val sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE)
+        val savedWeight = sharedPreferences.getString("weight", "")
+        val savedHeight = sharedPreferences.getString("height", "")
+
+        if (!savedWeight.isNullOrEmpty() && !savedHeight.isNullOrEmpty()) {
+            edtWeight.setText(savedWeight)
+            edtHeight.setText(savedHeight)
+            
+            // Tự động tính toán luôn
             calculateBMI()
         }
     }
