@@ -72,6 +72,8 @@ class OnboardingActivity : AppCompatActivity() {
 
         progressOnboarding.progress = step
         btnNext.text = "TIẾP THEO"
+        btnNext.visibility = android.view.View.VISIBLE
+        txtSkip.visibility = android.view.View.VISIBLE
 
         selectedView = null
         selectedLayout = null
@@ -81,7 +83,8 @@ class OnboardingActivity : AppCompatActivity() {
             2 -> showGoalStep()
             3 -> showFocusStep()
             4 -> showBodyInfoStep()
-            5 -> showPlanReadyStep()
+            5 -> showProcessingStep()
+            6 -> showPlanReadyStep()
         }
     }
 
@@ -121,10 +124,49 @@ class OnboardingActivity : AppCompatActivity() {
                 showStep()
             }
 
-            5 -> {
+            6 -> {
                 finishOnboarding()
             }
         }
+    }
+
+    private fun showProcessingStep() {
+        txtQuestion.text = "ĐANG TẠO KẾ HOẠCH\nCHO BẠN"
+        txtSubQuestion.text = "Đang chuẩn bị kế hoạch dựa trên mục tiêu của bạn..."
+        btnNext.visibility = android.view.View.GONE
+        txtSkip.visibility = android.view.View.GONE
+
+        val progressContainer = LinearLayout(this)
+        progressContainer.orientation = LinearLayout.VERTICAL
+        progressContainer.gravity = Gravity.CENTER
+
+        val progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleLarge)
+        val percentText = TextView(this)
+        percentText.textSize = 40f
+        percentText.setTypeface(null, Typeface.BOLD)
+        percentText.setTextColor(Color.BLACK)
+        percentText.setPadding(0, 30, 0, 0)
+        percentText.text = "0%"
+
+        progressContainer.addView(progressBar)
+        progressContainer.addView(percentText)
+        layoutOptions.addView(progressContainer)
+
+        var p = 0
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        val runnable = object : Runnable {
+            override fun run() {
+                if (p <= 100) {
+                    percentText.text = "$p%"
+                    p += 2
+                    handler.postDelayed(this, 30)
+                } else {
+                    step++
+                    showStep()
+                }
+            }
+        }
+        handler.post(runnable)
     }
 
     private fun showGenderStep() {
@@ -277,43 +319,89 @@ class OnboardingActivity : AppCompatActivity() {
 
 
     private fun showPlanReadyStep() {
-        txtQuestion.text = "Kế hoạch của bạn đã sẵn sàng!"
-        txtSubQuestion.text = "Chúng tôi đã chọn kế hoạch phù hợp với bạn nhất"
+        txtQuestion.text = "Kế hoạch của bạn đã\nsẵn sàng!"
+        txtSubQuestion.text = "Chúng tôi đã chọn kế hoạch này phù hợp với bạn nhất"
 
         layoutOptions.removeAllViews()
-        layoutOptions.orientation = LinearLayout.VERTICAL
-        layoutOptions.gravity = Gravity.CENTER
 
-        val plan = TextView(this)
-
-        plan.text =
-            "TẬP $focusArea\n\n" +
-                    "Mục tiêu: ${goals.joinToString(", ")}\n" +
-                    "Giới tính: $gender\n" +
-                    "Cân nặng: ${weight}kg\n" +
-                    "Chiều cao: ${height}cm\n" +
-                    "Cấp độ: Cơ bản\n" +
-                    "Thiết bị: Không đồ tập"
-
-        plan.textSize = 20f
-        plan.setTextColor(Color.WHITE)
-        plan.setTypeface(null, Typeface.BOLD)
-        plan.setPadding(36, 36, 36, 36)
-        plan.background = createRoundedBackground(
-            Color.rgb(0, 102, 255),
-            34f
+        val card = android.widget.FrameLayout(this)
+        val cardParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        plan.elevation = 12f
+        cardParams.setMargins(10, 20, 10, 20) // Giảm margin ngang để card rộng hơn
+        card.background = createRoundedBackground(Color.rgb(0, 102, 255), 60f)
+        card.setPadding(60, 80, 60, 80) // Tăng padding bên trong để khung to hơn
 
-        layoutOptions.addView(
-            plan,
-            LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+        val contentLayout = LinearLayout(this)
+        contentLayout.orientation = LinearLayout.VERTICAL
+
+        val badge = TextView(this)
+        badge.text = "TÙY CHỈNH CHO BẠN"
+        badge.textSize = 12f // Tăng cỡ chữ badge
+        badge.setTextColor(Color.WHITE)
+        badge.setTypeface(null, Typeface.BOLD)
+        badge.background = createRoundedBackground(Color.argb(80, 255, 255, 255), 12f)
+        badge.setPadding(25, 12, 25, 12)
+
+        val badgeParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
+        badgeParams.setMargins(0, 0, 0, 30)
+
+        val planTitle = TextView(this)
+        planTitle.text = "TẬP ${focusArea.uppercase()}"
+        planTitle.textSize = 32f // Tăng cỡ chữ tiêu đề
+        planTitle.setTextColor(Color.WHITE)
+        planTitle.setTypeface(null, Typeface.BOLD)
+
+        val grid = LinearLayout(this)
+        grid.orientation = LinearLayout.VERTICAL
+        grid.setPadding(0, 60, 0, 0) // Tăng khoảng cách grid
+
+        grid.addView(createStatRow("⏱ 10-22 phút", "🔥 ${if (gender == "Nam") "Nâng cao" else "Cơ bản"}"))
+        grid.addView(createStatRow("🎯 $focusArea", "✅ Không đồ tập"))
+
+        contentLayout.addView(badge, badgeParams)
+        contentLayout.addView(planTitle)
+        contentLayout.addView(grid)
+
+        val imageView = ImageView(this)
+        imageView.setImageResource(if (gender == "Nam") R.drawable.male else R.drawable.female)
+        imageView.alpha = 0.5f
+        val imgParams = android.widget.FrameLayout.LayoutParams(600, 600) // Tăng kích thước ảnh nhân vật
+        imgParams.gravity = Gravity.END or Gravity.CENTER_VERTICAL
+
+        card.addView(contentLayout)
+        card.addView(imageView, imgParams)
+
+        layoutOptions.addView(card, cardParams)
 
         btnNext.text = "BẮT ĐẦU NGAY"
+    }
+
+    private fun createStatRow(left: String, right: String): LinearLayout {
+        val row = LinearLayout(this)
+        row.orientation = LinearLayout.HORIZONTAL
+        row.setPadding(0, 15, 0, 15) // Tăng khoảng cách giữa các dòng
+
+        val tvLeft = TextView(this)
+        tvLeft.text = left
+        tvLeft.setTextColor(Color.WHITE)
+        tvLeft.textSize = 16f // Tăng cỡ chữ thông số
+        tvLeft.setTypeface(null, Typeface.BOLD)
+
+        val tvRight = TextView(this)
+        tvRight.text = right
+        tvRight.setTextColor(Color.WHITE)
+        tvRight.textSize = 16f // Tăng cỡ chữ thông số
+        tvRight.setTypeface(null, Typeface.BOLD)
+        tvRight.setPadding(60, 0, 0, 0)
+
+        row.addView(tvLeft)
+        row.addView(tvRight)
+        return row
     }
 
     private fun addGenderOption(
