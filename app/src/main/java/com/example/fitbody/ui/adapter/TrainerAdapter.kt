@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.fitbody.R
 import com.example.fitbody.model.Trainer
 
@@ -65,58 +64,46 @@ class TrainerAdapter(
         position: Int
     ) {
 
-        val trainer =
-            list[position]
+        val trainer = list[position]
 
         var isFavorite = false
 
-        holder.txtName.text =
-            trainer.name
+        holder.txtName.text = trainer.name
+        holder.txtSpecialty.text = trainer.specialty
+        holder.txtCalories.text = trainer.calories
 
-        holder.txtSpecialty.text =
-            trainer.specialty
+        val imageResId =
+            holder.itemView.context.resources.getIdentifier(
+                trainer.image,
+                "drawable",
+                holder.itemView.context.packageName
+            )
 
-        holder.txtCalories.text =
-            trainer.calories
-
-        Glide.with(holder.itemView.context)
-            .load(trainer.image)
-            .into(holder.imgTrainer)
-
-        // Mặc định icon yêu thích màu trắng
+        if (imageResId != 0) {
+            holder.imgTrainer.setImageResource(imageResId)
+        } else {
+            holder.imgTrainer.setImageResource(R.drawable.male)
+        }
 
         holder.imgFavorite.setImageResource(
             android.R.drawable.btn_star_big_on
         )
 
-        holder.imgFavorite.setColorFilter(
-            Color.WHITE
-        )
-
-        // Bấm lần 1: đỏ, bấm lần 2: trắng
+        holder.imgFavorite.setColorFilter(Color.WHITE)
 
         holder.imgFavorite.setOnClickListener {
 
             isFavorite = !isFavorite
 
             if (isFavorite) {
-
-                holder.imgFavorite.setColorFilter(
-                    Color.RED
-                )
-
+                holder.imgFavorite.setColorFilter(Color.RED)
                 onFavorite(trainer)
-
             } else {
-
-                holder.imgFavorite.setColorFilter(
-                    Color.WHITE
-                )
+                holder.imgFavorite.setColorFilter(Color.WHITE)
             }
         }
 
         holder.itemView.setOnClickListener {
-
             onClick(trainer)
         }
     }
