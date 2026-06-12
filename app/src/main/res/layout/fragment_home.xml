@@ -290,22 +290,38 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- HUẤN LUYỆN VIÊN -->
+        <!-- HUẤN LUYỆN VIÊN NỔI BẬT (TOP) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Huấn luyện viên nổi bật"
+            android:text="Huấn luyện viên được yêu thích nhất"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerTrainer"
+            android:id="@+id/recyclerTrainerTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:layout_marginBottom="24dp" />
+
+        <!-- TẤT CẢ HUẤN LUYỆN VIÊN -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Gợi ý huấn luyện viên cho bạn"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerTrainerAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

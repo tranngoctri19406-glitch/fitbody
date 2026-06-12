@@ -22,15 +22,17 @@ import com.example.fitbody.ui.ShopActivity
 import com.example.fitbody.ui.WorkoutStatsActivity
 import com.example.fitbody.ui.detail.TrainerDetailActivity
 import com.example.fitbody.utils.SessionManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class HomeFragment : Fragment() {
 
-    private lateinit var recyclerTrainer: RecyclerView
-    private lateinit var trainerAdapter: TrainerAdapter
-    private val trainerList = ArrayList<Trainer>()
+    private lateinit var recyclerTrainerTop: RecyclerView
+    private lateinit var recyclerTrainerAll: RecyclerView
+    
+    private lateinit var trainerAdapterTop: TrainerAdapter
+    private lateinit var trainerAdapterAll: TrainerAdapter
+    
+    private val trainerListTop = ArrayList<Trainer>()
+    private val trainerListAll = ArrayList<Trainer>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,24 +45,35 @@ class HomeFragment : Fragment() {
             false
         )
 
-        recyclerTrainer = view.findViewById(R.id.recyclerTrainer)
+        recyclerTrainerTop = view.findViewById(R.id.recyclerTrainerTop)
+        recyclerTrainerAll = view.findViewById(R.id.recyclerTrainerAll)
 
-        setupTrainerRecycler()
+        setupTrainerRecyclers()
         setupHomeMenu(view)
         loadTrainers()
 
         return view
     }
 
-    private fun setupTrainerRecycler() {
-        trainerAdapter = TrainerAdapter(
-            trainerList,
-            { trainer ->
-                val intent = Intent(
-                    requireContext(),
-                    TrainerDetailActivity::class.java
-                )
+    private fun setupTrainerRecyclers() {
+        // Adapter cho Top Trainer
+        trainerAdapterTop = createTrainerAdapter(trainerListTop)
+        recyclerTrainerTop.layoutManager = LinearLayoutManager(requireContext())
+        recyclerTrainerTop.adapter = trainerAdapterTop
+        recyclerTrainerTop.isNestedScrollingEnabled = false
 
+        // Adapter cho Random Trainer
+        trainerAdapterAll = createTrainerAdapter(trainerListAll)
+        recyclerTrainerAll.layoutManager = LinearLayoutManager(requireContext())
+        recyclerTrainerAll.adapter = trainerAdapterAll
+        recyclerTrainerAll.isNestedScrollingEnabled = false
+    }
+
+    private fun createTrainerAdapter(list: ArrayList<Trainer>): TrainerAdapter {
+        return TrainerAdapter(
+            list,
+            { trainer ->
+                val intent = Intent(requireContext(), TrainerDetailActivity::class.java)
                 intent.putExtra("trainer_id", trainer.id)
                 intent.putExtra("trainer_name", trainer.name)
                 intent.putExtra("trainer_specialty", trainer.specialty)
@@ -69,17 +82,15 @@ class HomeFragment : Fragment() {
                 intent.putExtra("trainer_muscle", trainer.muscle)
                 intent.putExtra("trainer_schedule", trainer.schedule)
                 intent.putExtra("trainer_description", trainer.description)
-
                 startActivity(intent)
             },
             { trainer ->
                 addFavorite(trainer.id)
+            },
+            { trainer ->
+                addLike(trainer.id)
             }
         )
-
-        recyclerTrainer.layoutManager = LinearLayoutManager(requireContext())
-        recyclerTrainer.adapter = trainerAdapter
-        recyclerTrainer.isNestedScrollingEnabled = false
     }
 
     private fun setupHomeMenu(view: View) {
@@ -127,19 +138,18 @@ class HomeFragment : Fragment() {
 
     private fun loadTrainers() {
         val dbHelper = DatabaseHelper(requireContext())
-        val data = dbHelper.getAllTrainers()
+        
+        // Load Top Trainers (Yêu thích nhiều nhất)
+        val topData = dbHelper.getTopFavoriteTrainers()
+        trainerListTop.clear()
+        trainerListTop.addAll(topData)
+        trainerAdapterTop.notifyDataSetChanged()
 
-        trainerList.clear()
-        trainerList.addAll(data)
-        trainerAdapter.notifyDataSetChanged()
-
-        if (data.isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                "Chưa có dữ liệu PT trong SQLite",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        // Load Random Trainers
+        val randomData = dbHelper.getRandomTrainers()
+        trainerListAll.clear()
+        trainerListAll.addAll(randomData)
+        trainerAdapterAll.notifyDataSetChanged()
     }
 
     private fun addFavorite(trainerId: Int) {
@@ -147,11 +157,7 @@ class HomeFragment : Fragment() {
         val userId = session.getUserId()
 
         if (userId == 0) {
-            Toast.makeText(
-                requireContext(),
-                "Bạn cần đăng nhập lại",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Bạn cần đăng nhập lại", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -159,17 +165,31 @@ class HomeFragment : Fragment() {
         val success = dbHelper.addFavorite(userId, trainerId)
 
         if (success) {
-            Toast.makeText(
-                requireContext(),
-                "Đã thêm PT vào yêu thích ❤️",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Đã thêm PT vào yêu thích ❤️", Toast.LENGTH_SHORT).show()
+            // Reload lại để cập nhật số lượt yêu thích hiện lên màn hình
+            loadTrainers()
         } else {
-            Toast.makeText(
-                requireContext(),
-                "Lỗi lưu yêu thích",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Lỗi lưu yêu thích", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun addLike(trainerId: Int) {
+        val session = SessionManager(requireContext())
+        val userId = session.getUserId()
+
+        if (userId == 0) {
+            Toast.makeText(requireContext(), "Bạn cần đăng nhập lại", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dbHelper = DatabaseHelper(requireContext())
+        val success = dbHelper.addLike(userId, trainerId)
+
+        if (success) {
+            Toast.makeText(requireContext(), "Cảm ơn bạn đã thích PT này! 👍", Toast.LENGTH_SHORT).show()
+            loadTrainers()
+        } else {
+            Toast.makeText(requireContext(), "Bạn đã thích PT này rồi hoặc có lỗi xảy ra", Toast.LENGTH_SHORT).show()
         }
     }
 }

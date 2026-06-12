@@ -18,7 +18,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "fitbody.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 5
 
         // Table names
         const val TABLE_USERS = "tbl_users"
@@ -28,6 +28,7 @@ class DatabaseHelper(context: Context) :
         const val TABLE_PROGRESS = "tbl_progress"
         const val TABLE_CHECKIN = "tbl_checkin"
         const val TABLE_FAVORITES = "tbl_favorites"
+        const val TABLE_LIKES = "tbl_likes"
         const val TABLE_PRODUCTS = "products"
         const val TABLE_CART = "cart"
     }
@@ -59,7 +60,8 @@ class DatabaseHelper(context: Context) :
                 schedule_text TEXT,
                 image TEXT,
                 description TEXT,
-                status TEXT DEFAULT 'active'
+                status TEXT DEFAULT 'active',
+                like_count INTEGER DEFAULT 0
             )
         """.trimIndent()
         )
@@ -150,6 +152,17 @@ class DatabaseHelper(context: Context) :
         """.trimIndent()
         )
 
+        db.execSQL(
+            """
+            CREATE TABLE $TABLE_LIKES (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                trainer_id INTEGER,
+                UNIQUE(user_id, trainer_id)
+            )
+        """.trimIndent()
+        )
+
         // Seed data
         seedTrainers(db)
         seedWorkouts(db)
@@ -185,6 +198,7 @@ class DatabaseHelper(context: Context) :
         db.execSQL("DROP TABLE IF EXISTS $TABLE_SCHEDULE")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CHECKIN")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_FAVORITES")
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_LIKES")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_PROGRESS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_PRODUCTS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CART")
@@ -299,7 +313,8 @@ class DatabaseHelper(context: Context) :
                         cursor.getString(cursor.getColumnIndexOrThrow("calories")),
                         cursor.getString(cursor.getColumnIndexOrThrow("schedule_text")),
                         cursor.getString(cursor.getColumnIndexOrThrow("image")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("description"))
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count"))
                     )
                 )
             } while (cursor.moveToNext())
@@ -316,6 +331,25 @@ class DatabaseHelper(context: Context) :
         }
         val result = db.insert(TABLE_FAVORITES, null, values)
         return result != -1L
+    }
+
+    fun addLike(userId: Int, trainerId: Int): Boolean {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("user_id", userId)
+            put("trainer_id", trainerId)
+        }
+        return try {
+            val result = db.insert(TABLE_LIKES, null, values)
+            if (result != -1L) {
+                db.execSQL("UPDATE $TABLE_TRAINERS SET like_count = like_count + 1 WHERE id = $trainerId")
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
     }
 
     fun getWorkoutsByTrainer(trainerId: Int): List<Workout> {
@@ -518,7 +552,8 @@ class DatabaseHelper(context: Context) :
                         cursor.getString(cursor.getColumnIndexOrThrow("calories")),
                         cursor.getString(cursor.getColumnIndexOrThrow("schedule_text")),
                         cursor.getString(cursor.getColumnIndexOrThrow("image")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("description"))
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count"))
                     )
                 )
             } while (cursor.moveToNext())
@@ -674,5 +709,55 @@ class DatabaseHelper(context: Context) :
             put("image", imagePath)
         }
         return db.update(TABLE_TRAINERS, values, "id = ?", arrayOf(trainerId.toString())) > 0
+    }
+
+    fun getTopFavoriteTrainers(): List<Trainer> {
+        val list = mutableListOf<Trainer>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_TRAINERS WHERE status = 'active' ORDER BY like_count DESC LIMIT 5", null)
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(
+                    Trainer(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("specialty")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("muscle")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("calories")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("schedule_text")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("image")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count"))
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return list
+    }
+
+    fun getRandomTrainers(): List<Trainer> {
+        val list = mutableListOf<Trainer>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_TRAINERS WHERE status = 'active' ORDER BY RANDOM() LIMIT 10", null)
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(
+                    Trainer(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("specialty")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("muscle")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("calories")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("schedule_text")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("image")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count"))
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return list
     }
 }

@@ -16,7 +16,9 @@ class TrainerAdapter(
 
     private val onClick: (Trainer) -> Unit,
 
-    private val onFavorite: (Trainer) -> Unit
+    private val onFavorite: (Trainer) -> Unit,
+    
+    private val onLike: (Trainer) -> Unit
 
 ) : RecyclerView.Adapter<TrainerAdapter.ViewHolder>() {
 
@@ -36,6 +38,12 @@ class TrainerAdapter(
 
         val imgFavorite: ImageView =
             view.findViewById(R.id.imgFavorite)
+
+        val imgLike: ImageView =
+            view.findViewById(R.id.imgLike)
+
+        val txtFavoriteCount: TextView =
+            view.findViewById(R.id.txtFavoriteCount)
     }
 
     override fun onCreateViewHolder(
@@ -71,6 +79,7 @@ class TrainerAdapter(
         holder.txtName.text = trainer.name
         holder.txtSpecialty.text = trainer.specialty
         holder.txtCalories.text = trainer.calories
+        holder.txtFavoriteCount.text = "${trainer.likeCount} lượt thích"
 
         val imageResId =
             holder.itemView.context.resources.getIdentifier(
@@ -101,6 +110,10 @@ class TrainerAdapter(
             } else {
                 holder.imgFavorite.setColorFilter(Color.WHITE)
             }
+        }
+
+        holder.imgLike.setOnClickListener {
+            onLike(trainer)
         }
 
         holder.itemView.setOnClickListener {
