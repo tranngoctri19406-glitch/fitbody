@@ -163,6 +163,10 @@ class LoginActivity : AppCompatActivity() {
         userId: Int = 0,
         username: String = ""
     ) {
+        val session = SessionManager(this)
+        val actualUserId = if (userId == 0) session.getUserId() else userId
+        val actualUsername = if (username.isEmpty()) session.getUsername() else username
+
         val sharedPreferences =
             getSharedPreferences(
                 "onboarding_data",
@@ -170,7 +174,7 @@ class LoginActivity : AppCompatActivity() {
             )
 
         val key =
-            "is_onboarding_completed_$userId"
+            "is_onboarding_completed_$actualUserId"
 
         val isCompleted =
             sharedPreferences.getBoolean(
@@ -191,8 +195,8 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
 
-        intent.putExtra("user_id", userId)
-        intent.putExtra("username", username)
+        intent.putExtra("user_id", actualUserId)
+        intent.putExtra("username", actualUsername)
 
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or

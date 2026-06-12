@@ -1,5 +1,6 @@
 package com.example.fitbody.ui.auth
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -121,7 +122,18 @@ class RegisterActivity : AppCompatActivity() {
             val session = SessionManager(this)
             session.saveLogin(name, "user", userId)
             
-            val intent = Intent(this, com.example.fitbody.MainActivity::class.java)
+            // Chuyển đến màn hình kiểm tra onboarding thay vì vào thẳng MainActivity
+            val sharedPreferences = getSharedPreferences("onboarding_data", MODE_PRIVATE)
+            val isCompleted = sharedPreferences.getBoolean("is_onboarding_completed_$userId", false)
+            
+            val intent = if (isCompleted) {
+                Intent(this, com.example.fitbody.MainActivity::class.java)
+            } else {
+                Intent(this, com.example.fitbody.ui.OnboardingActivity::class.java)
+            }
+            
+            intent.putExtra("user_id", userId)
+            intent.putExtra("username", name)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         } else {
