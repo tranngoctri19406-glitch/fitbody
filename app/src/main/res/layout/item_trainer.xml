@@ -9,8 +9,8 @@
     android:layout_marginBottom="18dp"
 
     app:cardCornerRadius="24dp"
-    app:cardBackgroundColor="#1E1E1E"
-    app:strokeColor="#333333"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:strokeColor="?attr/colorOutline"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -21,7 +21,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:background="#111111">
+            android:background="?android:attr/colorBackground">
 
             <ImageView
                 android:id="@+id/imgTrainer"
@@ -29,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:background="#111111"
+                android:background="?android:attr/colorBackground"
                 android:contentDescription="Ảnh huấn luyện viên" />
 
             <ImageView
@@ -41,16 +41,6 @@
                 android:src="@android:drawable/btn_star_big_on"
                 app:tint="#FFFFFF"
                 android:contentDescription="Yêu thích" />
-
-            <ImageView
-                android:id="@+id/imgLike"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_gravity="end|bottom"
-                android:layout_margin="14dp"
-                android:src="@drawable/ic_heart"
-                app:tint="#FFFFFF"
-                android:contentDescription="Thích" />
 
         </FrameLayout>
 
@@ -64,7 +54,7 @@
                 android:id="@+id/txtName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -72,7 +62,7 @@
                 android:id="@+id/txtSpecialty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#AAAAAA"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="15sp"
                 android:layout_marginTop="6dp" />
 
@@ -85,15 +75,34 @@
                 android:textSize="16sp"
                 android:layout_marginTop="10dp" />
 
-            <TextView
-                android:id="@+id/txtFavoriteCount"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#FFEB3B"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginTop="4dp"
-                android:text="0 lượt yêu thích" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/txtFavoriteCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFEB3B"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:text="0 lượt thích" />
+
+                <ImageView
+                    android:id="@+id/btnLikeToggle"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="12dp"
+                    android:src="@drawable/ic_heart"
+                    android:padding="2dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Nút thích" />
+            </LinearLayout>
 
         </LinearLayout>
 

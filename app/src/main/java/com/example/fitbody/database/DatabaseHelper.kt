@@ -13,7 +13,6 @@ import com.example.fitbody.model.Workout
 import com.example.fitbody.model.WorkoutStatsResponse
 
 class DatabaseHelper(context: Context) :
-
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
@@ -297,16 +296,17 @@ class DatabaseHelper(context: Context) :
         }
     }
 
-    // Helper functions to get Trainers
-    fun getAllTrainers(): List<Trainer> {
+    fun getAllTrainers(userId: Int = 0): List<Trainer> {
         val list = mutableListOf<Trainer>()
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $TABLE_TRAINERS WHERE status = 'active'", null)
         if (cursor.moveToFirst()) {
             do {
+                val trainerId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val isLiked = if (userId > 0) isLiked(userId, trainerId) else false
                 list.add(
                     Trainer(
-                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        trainerId,
                         cursor.getString(cursor.getColumnIndexOrThrow("name")),
                         cursor.getString(cursor.getColumnIndexOrThrow("specialty")),
                         cursor.getString(cursor.getColumnIndexOrThrow("muscle")),
@@ -314,7 +314,8 @@ class DatabaseHelper(context: Context) :
                         cursor.getString(cursor.getColumnIndexOrThrow("schedule_text")),
                         cursor.getString(cursor.getColumnIndexOrThrow("image")),
                         cursor.getString(cursor.getColumnIndexOrThrow("description")),
-                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count"))
+                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count")),
+                        isLiked
                     )
                 )
             } while (cursor.moveToNext())
@@ -350,6 +351,30 @@ class DatabaseHelper(context: Context) :
         } catch (e: Exception) {
             false
         }
+    }
+
+    fun removeLike(userId: Int, trainerId: Int): Boolean {
+        val db = writableDatabase
+        val deleted = db.delete(
+            TABLE_LIKES,
+            "user_id = ? AND trainer_id = ?",
+            arrayOf(userId.toString(), trainerId.toString())
+        ) > 0
+        if (deleted) {
+            db.execSQL("UPDATE $TABLE_TRAINERS SET like_count = MAX(0, like_count - 1) WHERE id = $trainerId")
+        }
+        return deleted
+    }
+
+    fun isLiked(userId: Int, trainerId: Int): Boolean {
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT 1 FROM $TABLE_LIKES WHERE user_id = ? AND trainer_id = ?",
+            arrayOf(userId.toString(), trainerId.toString())
+        )
+        val exists = cursor.moveToFirst()
+        cursor.close()
+        return exists
     }
 
     fun getWorkoutsByTrainer(trainerId: Int): List<Workout> {
@@ -543,9 +568,11 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery(query, arrayOf(userId.toString()))
         if (cursor.moveToFirst()) {
             do {
+                val trainerId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val isLiked = isLiked(userId, trainerId)
                 list.add(
                     Trainer(
-                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        trainerId,
                         cursor.getString(cursor.getColumnIndexOrThrow("name")),
                         cursor.getString(cursor.getColumnIndexOrThrow("specialty")),
                         cursor.getString(cursor.getColumnIndexOrThrow("muscle")),
@@ -553,7 +580,8 @@ class DatabaseHelper(context: Context) :
                         cursor.getString(cursor.getColumnIndexOrThrow("schedule_text")),
                         cursor.getString(cursor.getColumnIndexOrThrow("image")),
                         cursor.getString(cursor.getColumnIndexOrThrow("description")),
-                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count"))
+                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count")),
+                        isLiked
                     )
                 )
             } while (cursor.moveToNext())
@@ -711,15 +739,17 @@ class DatabaseHelper(context: Context) :
         return db.update(TABLE_TRAINERS, values, "id = ?", arrayOf(trainerId.toString())) > 0
     }
 
-    fun getTopFavoriteTrainers(): List<Trainer> {
+    fun getTopFavoriteTrainers(userId: Int = 0): List<Trainer> {
         val list = mutableListOf<Trainer>()
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $TABLE_TRAINERS WHERE status = 'active' ORDER BY like_count DESC LIMIT 5", null)
         if (cursor.moveToFirst()) {
             do {
+                val trainerId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val isLiked = if (userId > 0) isLiked(userId, trainerId) else false
                 list.add(
                     Trainer(
-                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        trainerId,
                         cursor.getString(cursor.getColumnIndexOrThrow("name")),
                         cursor.getString(cursor.getColumnIndexOrThrow("specialty")),
                         cursor.getString(cursor.getColumnIndexOrThrow("muscle")),
@@ -727,7 +757,8 @@ class DatabaseHelper(context: Context) :
                         cursor.getString(cursor.getColumnIndexOrThrow("schedule_text")),
                         cursor.getString(cursor.getColumnIndexOrThrow("image")),
                         cursor.getString(cursor.getColumnIndexOrThrow("description")),
-                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count"))
+                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count")),
+                        isLiked
                     )
                 )
             } while (cursor.moveToNext())
@@ -736,15 +767,17 @@ class DatabaseHelper(context: Context) :
         return list
     }
 
-    fun getRandomTrainers(): List<Trainer> {
+    fun getRandomTrainers(userId: Int = 0): List<Trainer> {
         val list = mutableListOf<Trainer>()
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $TABLE_TRAINERS WHERE status = 'active' ORDER BY RANDOM() LIMIT 10", null)
         if (cursor.moveToFirst()) {
             do {
+                val trainerId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val isLiked = if (userId > 0) isLiked(userId, trainerId) else false
                 list.add(
                     Trainer(
-                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        trainerId,
                         cursor.getString(cursor.getColumnIndexOrThrow("name")),
                         cursor.getString(cursor.getColumnIndexOrThrow("specialty")),
                         cursor.getString(cursor.getColumnIndexOrThrow("muscle")),
@@ -752,7 +785,8 @@ class DatabaseHelper(context: Context) :
                         cursor.getString(cursor.getColumnIndexOrThrow("schedule_text")),
                         cursor.getString(cursor.getColumnIndexOrThrow("image")),
                         cursor.getString(cursor.getColumnIndexOrThrow("description")),
-                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count"))
+                        cursor.getInt(cursor.getColumnIndexOrThrow("like_count")),
+                        isLiked
                     )
                 )
             } while (cursor.moveToNext())

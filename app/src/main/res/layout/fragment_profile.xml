@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212">
+    android:background="?android:attr/windowBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Trần An"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -38,17 +38,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="FitBody Member"
-            android:textColor="#AAAAAA"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="14sp" />
 
         <Button
             android:id="@+id/txtEditProfile"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Chỉnh sửa hồ sơ"
-            android:textColor="#7C4DFF" />
+            android:text="Chỉnh sửa hồ sơ" />
 
         <!-- NHÓM: CÀI ĐẶT -->
         <TextView
@@ -57,14 +56,14 @@
             android:layout_marginTop="32dp"
             android:layout_marginBottom="12dp"
             android:text="Cài đặt"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_card_home"
+            android:background="?attr/colorSurface"
             android:orientation="vertical"
             android:padding="8dp">
 
@@ -74,14 +73,14 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="🌙 Chế độ tối"
-                android:textColor="#FFFFFF"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="#333333" />
+                android:background="?attr/colorOutlineVariant" />
 
             <TextView
                 android:id="@+id/txtNotifications"
@@ -89,14 +88,14 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="🔔 Thông báo"
-                android:textColor="#FFFFFF"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="#333333" />
+                android:background="?attr/colorOutlineVariant" />
 
             <TextView
                 android:id="@+id/txtChangePassword"
@@ -104,14 +103,14 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="🔒 Đổi mật khẩu"
-                android:textColor="#FFFFFF"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="#333333" />
+                android:background="?attr/colorOutlineVariant" />
 
             <TextView
                 android:id="@+id/txtTerms"
@@ -119,14 +118,14 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="📄 Điều khoản sử dụng"
-                android:textColor="#FFFFFF"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="#333333" />
+                android:background="?attr/colorOutlineVariant" />
 
             <TextView
                 android:id="@+id/txtVersion"
@@ -134,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="ℹ️ Phiên bản ứng dụng (v1.0.0)"
-                android:textColor="#AAAAAA"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="14sp" />
 
         </LinearLayout>

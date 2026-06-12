@@ -13,36 +13,21 @@ import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.model.Trainer
 import com.example.fitbody.ui.detail.TrainerDetailActivity
 import com.example.fitbody.utils.SessionManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
 
     private lateinit var recyclerFavorite: RecyclerView
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?
-    ) {
-        super.onViewCreated(
-            view,
-            savedInstanceState
-        )
-
-        recyclerFavorite =
-            view.findViewById(R.id.recyclerFavorite)
-
-        recyclerFavorite.layoutManager =
-            LinearLayoutManager(requireContext())
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recyclerFavorite = view.findViewById(R.id.recyclerFavorite)
+        recyclerFavorite.layoutManager = LinearLayoutManager(requireContext())
         loadFavorites()
     }
 
     private fun loadFavorites() {
         val session = SessionManager(requireContext())
         val userId = session.getUserId()
-
         val dbHelper = DatabaseHelper(requireContext())
         val list = dbHelper.getFavorites(userId)
 
@@ -64,36 +49,35 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
                 removeFavorite(trainer.id)
             },
             { trainer ->
-                addLike(trainer.id)
+                toggleLike(trainer)
             }
         )
     }
 
-    private fun addLike(trainerId: Int) {
+    private fun toggleLike(trainer: Trainer) {
         val session = SessionManager(requireContext())
         val userId = session.getUserId()
-
         if (userId == 0) return
 
         val dbHelper = DatabaseHelper(requireContext())
-        val success = dbHelper.addLike(userId, trainerId)
-
-        if (success) {
-            Toast.makeText(requireContext(), "Cảm ơn bạn đã thích PT này! 👍", Toast.LENGTH_SHORT).show()
-            loadFavorites()
+        if (trainer.isLikedByMe) {
+            if (dbHelper.removeLike(userId, trainer.id)) {
+                Toast.makeText(requireContext(), "Đã bỏ thích", Toast.LENGTH_SHORT).show()
+                loadFavorites()
+            }
         } else {
-            Toast.makeText(requireContext(), "Bạn đã thích PT này rồi", Toast.LENGTH_SHORT).show()
+            if (dbHelper.addLike(userId, trainer.id)) {
+                Toast.makeText(requireContext(), "Cảm ơn bạn đã thích PT! 👍", Toast.LENGTH_SHORT).show()
+                loadFavorites()
+            }
         }
     }
 
     private fun removeFavorite(trainerId: Int) {
         val session = SessionManager(requireContext())
         val userId = session.getUserId()
-
         val dbHelper = DatabaseHelper(requireContext())
-        val success = dbHelper.removeFavorite(userId, trainerId)
-
-        if (success) {
+        if (dbHelper.removeFavorite(userId, trainerId)) {
             Toast.makeText(requireContext(), "Đã bỏ khỏi yêu thích", Toast.LENGTH_SHORT).show()
             loadFavorites()
         }
