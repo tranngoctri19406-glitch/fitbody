@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.fitbody.R
 import com.example.fitbody.database.DatabaseHelper
@@ -45,6 +46,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         txtTerms = view.findViewById(R.id.txtTerms)
         txtVersion = view.findViewById(R.id.txtVersion)
 
+        updateDarkModeText()
         loadProfileInfo()
 
         btnEditProfile.setOnClickListener {
@@ -52,7 +54,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         txtDarkMode.setOnClickListener {
-            Toast.makeText(requireContext(), "Chế độ tối đang phát triển", Toast.LENGTH_SHORT).show()
+            toggleDarkMode()
         }
 
         txtNotifications.setOnClickListener {
@@ -69,6 +71,32 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         btnLogout.setOnClickListener {
             logout()
+        }
+    }
+
+    private fun toggleDarkMode() {
+        val session = SessionManager(requireContext())
+        val isCurrentlyDark = session.isDarkMode()
+        val newMode = !isCurrentlyDark
+        
+        session.setDarkMode(newMode)
+        
+        if (newMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            Toast.makeText(requireContext(), "Đã bật chế độ tối 🌙", Toast.LENGTH_SHORT).show()
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            Toast.makeText(requireContext(), "Đã bật chế độ sáng ☀️", Toast.LENGTH_SHORT).show()
+        }
+        updateDarkModeText()
+    }
+
+    private fun updateDarkModeText() {
+        val session = SessionManager(requireContext())
+        if (session.isDarkMode()) {
+            txtDarkMode.text = "🌙 Chế độ tối: Bật"
+        } else {
+            txtDarkMode.text = "☀️ Chế độ tối: Tắt"
         }
     }
 

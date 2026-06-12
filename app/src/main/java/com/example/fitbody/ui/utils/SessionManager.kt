@@ -58,4 +58,12 @@ class SessionManager(
             .clear()
             .apply()
     }
+
+    fun setDarkMode(isDark: Boolean) {
+        prefs.edit().putBoolean("dark_mode", isDark).apply()
+    }
+
+    fun isDarkMode(): Boolean {
+        return prefs.getBoolean("dark_mode", false)
+    }
 }
