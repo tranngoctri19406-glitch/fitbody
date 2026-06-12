@@ -62,8 +62,28 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
             },
             { trainer ->
                 removeFavorite(trainer.id)
+            },
+            { trainer ->
+                addLike(trainer.id)
             }
         )
+    }
+
+    private fun addLike(trainerId: Int) {
+        val session = SessionManager(requireContext())
+        val userId = session.getUserId()
+
+        if (userId == 0) return
+
+        val dbHelper = DatabaseHelper(requireContext())
+        val success = dbHelper.addLike(userId, trainerId)
+
+        if (success) {
+            Toast.makeText(requireContext(), "Cảm ơn bạn đã thích PT này! 👍", Toast.LENGTH_SHORT).show()
+            loadFavorites()
+        } else {
+            Toast.makeText(requireContext(), "Bạn đã thích PT này rồi", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun removeFavorite(trainerId: Int) {
