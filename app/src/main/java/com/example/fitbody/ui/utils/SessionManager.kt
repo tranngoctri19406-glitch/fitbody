@@ -64,6 +64,6 @@ class SessionManager(
     }
 
     fun isDarkMode(): Boolean {
-        return prefs.getBoolean("dark_mode", false)
+        return prefs.getBoolean("dark_mode", true)
     }
 }

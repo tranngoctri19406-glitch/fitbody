@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#121212">
@@ -19,20 +18,20 @@
                 android:id="@+id/imgTrainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/btnBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="42dp"
+                android:background="#88000000"
+                android:padding="12dp"
                 android:text="← Quay lại"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:background="#88000000"
-                android:padding="12dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="42dp"/>
+                android:textStyle="bold" />
 
         </FrameLayout>
 
@@ -42,68 +41,87 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <TextView
-                android:id="@+id/txtName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="David Laid"
-                android:textColor="#FFFFFF"
-                android:textSize="30sp"
-                android:textStyle="bold"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/btnChatHeader"
+                    android:text="David Laid"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnChatHeader"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_chat_custom"
+                    android:padding="8dp" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/txtSpecialty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Aesthetic Bodybuilder"
                 android:textColor="#AAAAAA"
-                android:textSize="18sp"
-                android:layout_marginTop="8dp"/>
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/txtCalories"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="Calories: 3200 kcal"
                 android:textColor="#FF5252"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtMuscle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Nhóm cơ: Ngực • Vai • Tay"
                 android:textColor="#FFFFFF"
-                android:textSize="17sp"
-                android:layout_marginTop="12dp"/>
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/txtSchedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 android:text="Lịch tập"
                 android:textColor="#CCCCCC"
-                android:textSize="16sp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="14dp"
                 android:text="Danh sách bài tập"
                 android:textColor="#FFFFFF"
                 android:textSize="22sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="14dp"/>
+                android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerWorkout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
+                android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
 

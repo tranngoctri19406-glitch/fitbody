@@ -46,15 +46,28 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         txtTerms = view.findViewById(R.id.txtTerms)
         txtVersion = view.findViewById(R.id.txtVersion)
 
-        updateDarkModeText()
         loadProfileInfo()
 
         btnEditProfile.setOnClickListener {
             startActivity(Intent(requireContext(), EditProfileActivity::class.java))
         }
 
+        updateDarkModeText()
+
         txtDarkMode.setOnClickListener {
-            toggleDarkMode()
+            val session = SessionManager(requireContext())
+            val isDark = session.isDarkMode()
+            val newMode = !isDark
+            
+            session.setDarkMode(newMode)
+            
+            if (newMode) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            
+            updateDarkModeText()
         }
 
         txtNotifications.setOnClickListener {
@@ -74,29 +87,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
     }
 
-    private fun toggleDarkMode() {
-        val session = SessionManager(requireContext())
-        val isCurrentlyDark = session.isDarkMode()
-        val newMode = !isCurrentlyDark
-        
-        session.setDarkMode(newMode)
-        
-        if (newMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            Toast.makeText(requireContext(), "Đã bật chế độ tối 🌙", Toast.LENGTH_SHORT).show()
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            Toast.makeText(requireContext(), "Đã bật chế độ sáng ☀️", Toast.LENGTH_SHORT).show()
-        }
-        updateDarkModeText()
-    }
-
     private fun updateDarkModeText() {
         val session = SessionManager(requireContext())
         if (session.isDarkMode()) {
-            txtDarkMode.text = "🌙 Chế độ tối: Bật"
+            txtDarkMode.text = "☀️ Chế độ sáng"
         } else {
-            txtDarkMode.text = "☀️ Chế độ tối: Tắt"
+            txtDarkMode.text = "🌙 Chế độ tối"
         }
     }
 

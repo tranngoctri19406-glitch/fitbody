@@ -13,6 +13,8 @@ import com.example.fitbody.R
 import com.example.fitbody.adapter.WorkoutAdapter
 import com.example.fitbody.database.DatabaseHelper
 import com.example.fitbody.model.Workout
+import com.example.fitbody.ui.ChatActivity
+import android.widget.ImageButton
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -96,6 +98,13 @@ class TrainerDetailActivity : AppCompatActivity() {
         }
 
         loadWorkouts(trainerId)
+
+        findViewById<ImageButton>(R.id.btnChatHeader).setOnClickListener {
+            val intentChat = Intent(this, ChatActivity::class.java)
+            intentChat.putExtra("trainer_id", trainerId)
+            intentChat.putExtra("trainer_name", name)
+            startActivity(intentChat)
+        }
     }
 
     private fun loadWorkouts(trainerId: Int) {
