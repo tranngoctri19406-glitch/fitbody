@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground">
+    android:background="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +27,8 @@
             android:layout_marginTop="6dp"
             android:layout_marginBottom="24dp"
             android:text="Build Your Dream Body"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="?attr/colorOnSurface"
+            android:alpha="0.6"
             android:textSize="16sp" />
 
         <!-- NHÓM: THEO DÕI SỨC KHỎE -->
@@ -68,7 +69,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center"
                     android:text="BMI\nCalculator"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -94,7 +95,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center"
                     android:text="Thống kê\ntập luyện"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -120,7 +121,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center"
                     android:text="Tiến độ\ntập luyện"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -164,7 +165,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center"
                     android:text="QR\nCheck-in"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -190,7 +191,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center"
                     android:text="Lịch sử\nCheck-in"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -216,7 +217,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center"
                     android:text="Lịch tập\ncá nhân"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -259,7 +260,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="Premium Plan"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -284,44 +285,28 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="Shop FitBody"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- HUẤN LUYỆN VIÊN NỔI BẬT (TOP) -->
+        <!-- HUẤN LUYỆN VIÊN -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Huấn luyện viên được yêu thích nhất"
+            android:text="Huấn luyện viên nổi bật"
             android:textColor="?attr/colorOnSurface"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerTrainerTop"
+            android:id="@+id/recyclerTrainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="24dp" />
-
-        <!-- TẤT CẢ HUẤN LUYỆN VIÊN -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Gợi ý huấn luyện viên cho bạn"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerTrainerAll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false" />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
@@ -11,6 +10,11 @@
         android:id="@+id/nav_favorite"
         android:icon="@android:drawable/btn_star_big_on"
         android:title="Yêu thích" />
+
+    <item
+        android:id="@+id/nav_chat"
+        android:icon="@android:drawable/ic_menu_send"
+        android:title="Chat" />
 
     <item
         android:id="@+id/nav_profile"

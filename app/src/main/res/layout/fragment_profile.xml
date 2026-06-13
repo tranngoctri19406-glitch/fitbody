@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground">
+    android:background="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,16 +38,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="FitBody Member"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="?attr/colorOnSurface"
+            android:alpha="0.6"
             android:textSize="14sp" />
 
         <Button
             android:id="@+id/txtEditProfile"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Chỉnh sửa hồ sơ" />
+            android:text="Chỉnh sửa hồ sơ"
+            android:textColor="#7C4DFF" />
 
         <!-- NHÓM: CÀI ĐẶT -->
         <TextView
@@ -63,7 +65,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
+            android:background="?attr/colorSecondaryContainer"
             android:orientation="vertical"
             android:padding="8dp">
 
@@ -80,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="?attr/colorOutlineVariant" />
+                android:background="#333333" />
 
             <TextView
                 android:id="@+id/txtNotifications"
@@ -95,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="?attr/colorOutlineVariant" />
+                android:background="#333333" />
 
             <TextView
                 android:id="@+id/txtChangePassword"
@@ -110,7 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="?attr/colorOutlineVariant" />
+                android:background="#333333" />
 
             <TextView
                 android:id="@+id/txtTerms"
@@ -125,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="?attr/colorOutlineVariant" />
+                android:background="#333333" />
 
             <TextView
                 android:id="@+id/txtVersion"
@@ -133,7 +135,8 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="ℹ️ Phiên bản ứng dụng (v1.0.0)"
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColor="?attr/colorOnSurface"
+                android:alpha="0.6"
                 android:textSize="14sp" />
 
         </LinearLayout>

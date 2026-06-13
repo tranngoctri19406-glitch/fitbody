@@ -16,9 +16,5 @@ data class Trainer(
 
     val image: String,
 
-    val description: String,
-    
-    val likeCount: Int = 0,
-    
-    val isLikedByMe: Boolean = false
+    val description: String
 )
